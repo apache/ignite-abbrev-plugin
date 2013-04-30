@@ -28,7 +28,7 @@ import org.jetbrains.annotations.*;
 public class GridGetterSetterSubstitutor  extends PsiElementBaseIntentionAction implements IntentionAction {
     /** {@inheritDoc} */
     @NotNull public String getText() {
-        return "GridGainify getters and setters (alpha, use with care!)";
+        return "GridGainify getters and setters";
     }
 
     /** {@inheritDoc} */
@@ -89,7 +89,8 @@ public class GridGetterSetterSubstitutor  extends PsiElementBaseIntentionAction 
      * @return {@code true} if matches, {@code false} otherwise.
      */
     private boolean methodNameMatches(String methodName) {
-        // TODO: also check the 4-th letter
-        return methodName.length() > 3 && (methodName.startsWith("get") || methodName.startsWith("set"));
+        return methodName.length() > 3 &&
+            (methodName.startsWith("get") || methodName.startsWith("set")) &&
+            Character.isUpperCase(methodName.charAt(3));
     }
 }
