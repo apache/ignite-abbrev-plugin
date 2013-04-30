@@ -18,6 +18,8 @@ import org.jetbrains.annotations.*;
 import java.io.*;
 import java.util.*;
 
+import static org.gridgain.util.GridStringUtils.*;
+
 /**
  * Inspection that checks variable names for usage of restricted words that
  * need to be abbreviated.
@@ -127,7 +129,7 @@ public class AbbreviationInspection extends BaseJavaLocalInspectionTool {
              * @param el Element to highlight the problem.
              */
             private void checkShouldAbbreviate(PsiNamedElement toCheck, PsiElement el) {
-                List<String> nameParts = nameParts(toCheck.getName());
+                List<String> nameParts = camelCaseParts(toCheck.getName());
 
                 for (String part : nameParts) {
                     if (getAbbreviation(part) != null) {
@@ -256,187 +258,29 @@ public class AbbreviationInspection extends BaseJavaLocalInspectionTool {
         return abbreviationRules.getAbbreviation(namePart);
     }
 
-    /**
-     * Enum represents state of variable name parser.
-     */
-    private enum ParserState {
-        /** State when no input symbols parsed yet. */
-        START,
-
-        /** First symbol parsed was capital. */
-        CAPITAL,
-
-        /** Parser is inside word token. */
-        WORD,
-
-        /** Parser is inside number. */
-        NUM,
-
-        /** Parser is inside abbreviation in capital letters. */
-        ABBREVIATION
-    }
-
-    /**
-     * Splits variable name into parts according to java naming conventions.
-     *
-     * @param name Variable or field name.
-     * @return List containing variable name parts.
-     */
-    List<String> nameParts(String name) {
-        List<String> res = new LinkedList<String>();
-
-        StringBuilder sb = new StringBuilder();
-
-        ParserState state = ParserState.START;
-
-        char pending = 0;
-
-        for (int i = 0; i < name.length(); i++) {
-            char c = name.charAt(i);
-
-            switch (state) {
-                case START:
-                    sb.append(c);
-
-                    if (Character.isLowerCase(c))
-                        state = ParserState.WORD;
-                    else if (Character.isUpperCase(c))
-                        state = ParserState.CAPITAL;
-                    else if (Character.isDigit(c))
-                        state = ParserState.NUM;
-                    else {
-                        res.add(sb.toString());
-
-                        sb.setLength(0);
-
-                        // Remain in start state.
-                    }
-                    break;
-
-                case CAPITAL:
-                    if (Character.isLowerCase(c)) {
-                        sb.append(c);
-
-                        state = ParserState.WORD;
-                    }
-                    else if (Character.isUpperCase(c)) {
-                        pending = c;
-
-                        state = ParserState.ABBREVIATION;
-                    }
-                    else if (Character.isDigit(c)) {
-                        res.add(sb.toString());
-
-                        sb.setLength(0);
-
-                        sb.append(c);
-
-                        state = ParserState.NUM;
-                    }
-                    else {
-                        res.add(sb.toString());
-
-                        sb.setLength(0);
-
-                        res.add(String.valueOf(c));
-
-                        state = ParserState.START;
-                    }
-                    break;
-
-                case WORD:
-                    if (Character.isLowerCase(c))
-                        sb.append(c);
-                    else {
-                        res.add(sb.toString());
-
-                        sb.setLength(0);
-
-                        state = ParserState.START;
-
-                        // Unread.
-                        i--;
-                    }
-                    break;
-
-                case ABBREVIATION:
-                    if (Character.isUpperCase(c)) {
-                        sb.append(pending);
-
-                        pending = c;
-                    }
-                    else if (Character.isLowerCase(c)) {
-                        res.add(sb.toString());
-
-                        sb.setLength(0);
-
-                        sb.append(pending).append(c);
-
-                        state = ParserState.WORD;
-                    }
-                    else {
-                        sb.append(pending);
-
-                        res.add(sb.toString());
-
-                        sb.setLength(0);
-
-                        state = ParserState.START;
-
-                        // Unread.
-                        i--;
-                    }
-                    break;
-
-                case NUM:
-                    if (Character.isDigit(c))
-                        sb.append(c);
-                    else {
-                        res.add(sb.toString());
-
-                        sb.setLength(0);
-
-                        state = ParserState.START;
-
-                        // Unread.
-                        i--;
-                    }
-                    break;
-            }
-        }
-
-        if (state == ParserState.ABBREVIATION)
-            sb.append(pending);
-
-        if (sb.length() > 0)
-            res.add(sb.toString());
-
-        return res;
-    }
-
     public static void main(String[] args) {
         AbbreviationInspection i = new AbbreviationInspection();
 
-        assert listsEqual(Arrays.asList("count"), i.nameParts("count"));
-        assert listsEqual(Arrays.asList("Count"), i.nameParts("Count"));
-        assert listsEqual(Arrays.asList("Count", "1"), i.nameParts("Count1"));
-        assert listsEqual(Arrays.asList("my", "Count"), i.nameParts("myCount"));
-        assert listsEqual(Arrays.asList("my", "Count"), i.nameParts("myCount"));
-        assert listsEqual(Arrays.asList("MY", "_", "COUNT"), i.nameParts("MY_COUNT"));
-        assert listsEqual(Arrays.asList("MY", "_", "COUNT", "1"), i.nameParts("MY_COUNT1"));
-        assert listsEqual(Arrays.asList("_", "_", "my", "_", "Count"), i.nameParts("__my_Count"));
-        assert listsEqual(Arrays.asList("my", "123", "Count"), i.nameParts("my123Count"));
-        assert listsEqual(Arrays.asList("my", "_","123", "_", "Count"), i.nameParts("my_123_Count"));
-        assert listsEqual(Arrays.asList("my","BIG", "Count"), i.nameParts("myBIGCount"));
-        assert listsEqual(Arrays.asList("my","BIG", "_", "count"), i.nameParts("myBIG_count"));
-        assert listsEqual(Arrays.asList("my","1", "BIG", "2", "count"), i.nameParts("my1BIG2count"));
-        assert listsEqual(Arrays.asList("my","1", "BIG", "2", "Count"), i.nameParts("my1BIG2Count"));
+        assert listsEqual(Arrays.asList("count"), camelCaseParts("count"));
+        assert listsEqual(Arrays.asList("Count"), camelCaseParts("Count"));
+        assert listsEqual(Arrays.asList("Count", "1"), camelCaseParts("Count1"));
+        assert listsEqual(Arrays.asList("my", "Count"), camelCaseParts("myCount"));
+        assert listsEqual(Arrays.asList("my", "Count"), camelCaseParts("myCount"));
+        assert listsEqual(Arrays.asList("MY", "_", "COUNT"), camelCaseParts("MY_COUNT"));
+        assert listsEqual(Arrays.asList("MY", "_", "COUNT", "1"), camelCaseParts("MY_COUNT1"));
+        assert listsEqual(Arrays.asList("_", "_", "my", "_", "Count"), camelCaseParts("__my_Count"));
+        assert listsEqual(Arrays.asList("my", "123", "Count"), camelCaseParts("my123Count"));
+        assert listsEqual(Arrays.asList("my", "_","123", "_", "Count"), camelCaseParts("my_123_Count"));
+        assert listsEqual(Arrays.asList("my","BIG", "Count"), camelCaseParts("myBIGCount"));
+        assert listsEqual(Arrays.asList("my","BIG", "_", "count"), camelCaseParts("myBIG_count"));
+        assert listsEqual(Arrays.asList("my","1", "BIG", "2", "count"), camelCaseParts("my1BIG2count"));
+        assert listsEqual(Arrays.asList("my","1", "BIG", "2", "Count"), camelCaseParts("my1BIG2Count"));
 
 
-        assert "cnt".equals(i.replaceWithAbbreviations(i.nameParts("count")));
-        assert "Cnt".equals(i.replaceWithAbbreviations(i.nameParts("Count")));
-        assert "myCnt".equals(i.replaceWithAbbreviations(i.nameParts("myCount")));
-        assert "MY_CNT".equals(i.replaceWithAbbreviations(i.nameParts("MY_COUNT")));
+        assert "cnt".equals(i.replaceWithAbbreviations(camelCaseParts("count")));
+        assert "Cnt".equals(i.replaceWithAbbreviations(camelCaseParts("Count")));
+        assert "myCnt".equals(i.replaceWithAbbreviations(camelCaseParts("myCount")));
+        assert "MY_CNT".equals(i.replaceWithAbbreviations(camelCaseParts("MY_COUNT")));
     }
 
     private static boolean listsEqual(List<String> one, List<String> two) {

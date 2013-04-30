@@ -1,1 +1,0 @@
-# Apache Ignite Abbreviation Plugin
