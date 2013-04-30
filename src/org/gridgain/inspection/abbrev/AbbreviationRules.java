@@ -25,128 +25,12 @@ import java.util.concurrent.atomic.*;
 public class AbbreviationRules {
     /** File refresh frequency. */
     private static final int FILE_REFRESH_FREQ = 5000;
-    
-    /** Hardcoded abbreviation table if no abbreviation file can be found. */
-    private static final String[][] ABBREV_TABLE = {
-        {"address", "addr"},
-        {"administration", "admin"},
-        {"argument", "arg"},
-        {"array", "arr"},
-        {"attachment", "attach"},
-        {"attributes", "attrs"},
-        {"buffer", "buf"},
-        {"certificate", "cert"},
-        {"callable", "call"},
-        {"char", "c"},
-        {"channel", "ch"},
-        {"class", "cls"},
-        {"closure", "c"},
-        {"collection", "col"},
-        {"connection", "conn"},
-        {"command", "cmd"},
-        {"communication", "comm"},
-        {"comparator", "comp"},
-        {"condition", "cond"},
-        {"config", "cfg"},
-        {"context", "ctx"},
-        {"control", "ctrl"},
-        {"coordinator", "crd"},
-        {"copy", "cp"},
-        {"counter", "cntr"},
-        {"count", "cnt"},
-        {"current", "curr"},
-        {"database", "db"},
-        {"declare", "decl"},
-        {"declaration", "decl"},
-        {"default", "dflt"},
-        {"delete", "del"},
-        {"delimiter", "delim"},
-        {"description", "desc"},
-        {"descriptor", "descr"},
-        {"destination", "dest"},
-        {"directory", "dir"},
-        {"event", "evt"},
-        {"exception", "e"},
-        {"execute", "exec"},
-        {"expected", "exp"},
-        {"externalizable", "ext"},
-        {"frequency", "freq"},
-        {"future", "fut"},
-        {"group", "grp"},
-        {"handler", "hnd"},
-        {"header", "hdr"},
-        {"implementation", "impl"},
-        {"index", "idx"},
-        {"initial", "init"},
-        {"initialize", "init"},
-        {"interface", "itf"},
-        {"iterator", "iter"},
-        {"listener", "lsnr"},
-        {"local", "loc"},
-        {"locale", "loc"},
-        {"logger", "log"},
-        {"loader", "ldr"},
-        {"manager", "mgr"},
-        {"message", "msg"},
-        {"method", "mtd"},
-        {"microkernel", "mk"},
-        {"milliseconds", "ms"},
-        {"multicast", "mcast"},
-        {"mutex", "mux"},
-        {"network", "net"},
-        {"number", "num"},
-        {"object", "obj"},
-        {"package", "pkg"},
-        {"parameter", "param"},
-        {"permission", "perm"},
-        {"permissions", "perms"},
-        {"password", "pwd"},
-        {"pattern", "ptrn"},
-        {"policy", "plc"},
-        {"predicate", "pred"},
-        {"priority", "pri"},
-        {"projection", "prj"},
-        {"projections", "prjs"},
-        {"property", "prop"},
-        {"properties", "props"},
-        {"protocol", "proto"},
-        {"process", "proc"},
-        {"query", "qry"},
-        {"receive", "rcv"},
-        {"recipient", "rcpt"},
-        {"reference", "ref"},
-        {"remove", "rmv"},
-        {"removed", "rmv"},
-        {"rename", "ren"},
-        {"repository", "repo"},
-        {"request", "req"},
-        {"resource", "rsrc"},
-        {"response", "res"},
-        {"send", "snd"},
-        {"sender", "snd"},
-        {"serializable", "ser"},
-        {"service", "srvc"},
-        {"session", "ses"},
-        {"sequence", "seq"},
-        {"sibling", "sib"},
-        {"socket", "sock"},
-        {"source", "src"},
-        {"specification", "spec"},
-        {"strategy", "stgy"},
-        {"string", "str"},
-        {"system", "sys"},
-        {"taxonomy", "tax"},
-        {"timestamp", "ts"},
-        {"token", "tok"},
-        {"topology", "top"},
-        {"unicast", "ucast"},
-        {"value", "val"},
-        {"version", "ver"},
-        {"windows", "win"},
-    };
 
     /** Map from common words to abbreviations. */
-    private volatile Map<String, String> abbreviationMap = new ConcurrentHashMap<String, String>();
+    private volatile Map<String, String> abbrevMap = new ConcurrentHashMap<String, String>();
+
+    /** Map from abbreviations to common words. */
+    private volatile Map<String, String> revAbbrevMap = new ConcurrentHashMap<String, String>();
 
     /** File with abbreviation rules. */
     private File abbreviationFile;
@@ -173,7 +57,7 @@ public class AbbreviationRules {
         try {
             if (initFlag.compareAndSet(false, true)) {
                 instance = new AbbreviationRules(file);
-    
+
                 singletonInitLatch.countDown();
             }
             else
@@ -195,13 +79,25 @@ public class AbbreviationRules {
      */
     private AbbreviationRules(File file) {
         if (file == null) {
-            for (String[] entry : ABBREV_TABLE) {
-                assert entry.length == 2;
+            InputStream is = getClass().getResourceAsStream("/abbreviation.properties");
 
-                abbreviationMap.put(entry[0], entry[1]);
+            try {
+                load(is);
             }
-
-            initLatch.countDown();
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            finally {
+                try {
+                    is.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+                finally {
+                    initLatch.countDown();
+                }
+            }
         }
         else {
             abbreviationFile = file;
@@ -215,6 +111,32 @@ public class AbbreviationRules {
     }
 
     /**
+     * Loads abbreviation rules from the input stream
+     *
+     * @param is Input stream.
+     * @throws IOException If IO error occurs.
+     */
+    private void load(InputStream is) throws IOException {
+        Properties props = new Properties();
+
+        props.load(is);
+
+        Map<String, String> refreshed = new ConcurrentHashMap<String, String>();
+        Map<String, String> revRefreshed = new ConcurrentHashMap<String, String>();
+
+        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+            String key = (String)entry.getKey();
+            String val = (String)entry.getValue();
+
+            refreshed.put(key, val);
+            revRefreshed.put(val, key);
+        }
+
+        abbrevMap = refreshed;
+        revAbbrevMap = revRefreshed;
+    }
+
+    /**
      * Performs lookup of name part in abbreviation table.
      *
      * @param namePart Name part to lookup.
@@ -225,7 +147,28 @@ public class AbbreviationRules {
             if (initLatch.getCount() == 1)
                 initLatch.await();
 
-            return abbreviationMap.get(namePart.toLowerCase());
+            return abbrevMap.get(namePart.toLowerCase());
+        }
+        catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+
+            return null;
+        }
+    }
+
+    /**
+     * Performs lookup of abbreviated part in reverse abbreviation
+     * table.
+     *
+     * @param abbrev Abbreviated string.
+     * @return Unwrapped string.
+     */
+    @Nullable public String getUnwrapping(String abbrev) {
+        try {
+            if (initLatch.getCount() == 1)
+                initLatch.await();
+
+            return revAbbrevMap.get(abbrev.toLowerCase());
         }
         catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -245,10 +188,10 @@ public class AbbreviationRules {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
                     loadAbbreviations();
-    
+
                     if (initLatch.getCount() == 1)
                         initLatch.countDown();
-    
+
                     Thread.sleep(FILE_REFRESH_FREQ);
                 }
             }
@@ -270,16 +213,7 @@ public class AbbreviationRules {
                 try {
                     input = new FileInputStream(abbreviationFile);
 
-                    Properties props = new Properties();
-
-                    props.load(new BufferedReader(new InputStreamReader(input)));
-                    
-                    Map<String, String> refreshed = new ConcurrentHashMap<String, String>();
-
-                    for (Map.Entry<Object, Object> entry : props.entrySet())
-                        refreshed.put((String)entry.getKey(), (String)entry.getValue());
-
-                    abbreviationMap = refreshed;
+                    load(input);
                 }
                 catch (IOException ignored) {
                     // Just leave the last state.

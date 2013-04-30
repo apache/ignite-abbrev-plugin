@@ -1,7 +1,9 @@
 <idea-plugin version="2">
-    <name>GridGain abbreviation rules</name>
-    <description>This plugin checks for incorrect usage of abbreviated names</description>
-    <version>1.0</version>
+    <name>GridGain plugin</name>
+    <description><![CDATA[Simplifies development with GridGain
+        <a href="http://atlassian.gridgain.com/wiki/display/GG/Coding+Guidelines">coding guidelines</a>.]]>
+    </description>
+    <version>2.0</version>
     <vendor>GridGain Inc.</vendor>
     <idea-version since-build="8000"/>
 
@@ -9,14 +11,24 @@
     </application-components>
 
     <project-components>
-        <!-- Add your project components here -->
     </project-components>
 
     <actions>
-        <!-- Add your actions here -->
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
         <inspectionToolProvider implementation="org.gridgain.inspection.abbrev.AbbreviationInspectionProvider"/>
+
+        <intentionAction>
+            <className>org.gridgain.intention.GridGetterSetterGenerator</className>
+            <category>Getter Setter</category>
+            <descriptionDirectoryName>GridGetterSetterGenerator</descriptionDirectoryName>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.gridgain.intention.GridGetterSetterSubstitutor</className>
+            <category>Getter Setter</category>
+            <descriptionDirectoryName>GridGetterSetterSubstitutor</descriptionDirectoryName>
+        </intentionAction>
     </extensions>
 </idea-plugin>
