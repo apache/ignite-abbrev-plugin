@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.*;
  * @author @java.author
  * @version @java.version
  */
-public class AbbreviationRules {
+public class GridAbbreviationRules {
     /** File refresh frequency. */
     private static final int FILE_REFRESH_FREQ = 5000;
 
@@ -39,7 +39,7 @@ public class AbbreviationRules {
     private CountDownLatch initLatch = new CountDownLatch(1);
 
     /** Singleton instance. */
-    private static volatile AbbreviationRules instance;
+    private static volatile GridAbbreviationRules instance;
 
     /** Init flag */
     private static AtomicBoolean initFlag = new AtomicBoolean();
@@ -53,10 +53,10 @@ public class AbbreviationRules {
      * @param file Abbreviations file.
      * @return Instance of abbreviation rules.
      */
-    public static AbbreviationRules getInstance(@Nullable File file) {
+    public static GridAbbreviationRules getInstance(@Nullable File file) {
         try {
             if (initFlag.compareAndSet(false, true)) {
-                instance = new AbbreviationRules(file);
+                instance = new GridAbbreviationRules(file);
 
                 singletonInitLatch.countDown();
             }
@@ -77,7 +77,7 @@ public class AbbreviationRules {
      *
      * @param file Abbreviations file or {@code null} if internal rules should be used.
      */
-    private AbbreviationRules(File file) {
+    private GridAbbreviationRules(File file) {
         if (file == null) {
             InputStream is = getClass().getResourceAsStream("/abbreviation.properties");
 
