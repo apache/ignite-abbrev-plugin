@@ -30,20 +30,20 @@ import static org.gridgain.util.GridStringUtils.*;
  */
 public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction implements IntentionAction {
     /** Abbreviation rules. */
-    private final AbbreviationRules abbrevRules;
+    private final GridAbbreviationRules abbrevRules;
 
     public GridGetterSetterGenerator() {
         String ggHome = System.getenv("GRIDGAIN_HOME");
 
         if (ggHome == null)
-            abbrevRules = AbbreviationRules.getInstance(null);
+            abbrevRules = GridAbbreviationRules.getInstance(null);
         else {
             File abbrevFile = new File(new File(ggHome), "idea" + File.separatorChar + "abbreviation.properties");
 
             if (!abbrevFile.exists() || !abbrevFile.isFile())
-                abbrevRules = AbbreviationRules.getInstance(null);
+                abbrevRules = GridAbbreviationRules.getInstance(null);
             else
-                abbrevRules = AbbreviationRules.getInstance(abbrevFile);
+                abbrevRules = GridAbbreviationRules.getInstance(abbrevFile);
         }
     }
 

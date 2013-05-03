@@ -17,7 +17,7 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <inspectionToolProvider implementation="org.gridgain.inspection.abbrev.AbbreviationInspectionProvider"/>
+        <inspectionToolProvider implementation="org.gridgain.inspection.GridInspectionProvider"/>
 
         <intentionAction>
             <className>org.gridgain.intention.GridGetterSetterGenerator</className>

@@ -7,9 +7,11 @@
  *  \____/   /_/     /_/   \_,__/   \____/   \__,_/  /_/   /_/ /_/
  */
 
-package org.gridgain.inspection.abbrev;
+package org.gridgain.inspection;
 
 import com.intellij.codeInspection.*;
+import org.gridgain.inspection.abbrev.*;
+import org.gridgain.inspection.comment.*;
 
 /**
  * Provider for inspections.
@@ -17,8 +19,8 @@ import com.intellij.codeInspection.*;
  * @author @java.author
  * @version @java.version
  */
-public class AbbreviationInspectionProvider implements InspectionToolProvider {
+public class GridInspectionProvider implements InspectionToolProvider {
     public Class[] getInspectionClasses() {
-        return new Class[] {AbbreviationInspection.class};
+        return new Class[] { GridAbbreviationInspection.class, GridCommentInspection.class };
     }
 }

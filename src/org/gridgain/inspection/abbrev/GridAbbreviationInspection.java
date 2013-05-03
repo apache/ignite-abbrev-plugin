@@ -27,9 +27,12 @@ import static org.gridgain.util.GridStringUtils.*;
  * @author @java.author
  * @version @java.version
  */
-public class AbbreviationInspection extends BaseJavaLocalInspectionTool {
+public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
+    /** Project home JVM property name. */
+    private static final String PROJECT_HOME_PROP_NAME = "GRIDGAIN_PROJECT_HOME";
+
     /** Abbreviation rules. */
-    private AbbreviationRules abbreviationRules;
+    private GridAbbreviationRules abbreviationRules;
 
     /** User message for options panel. */
     private String userMsg;
@@ -37,27 +40,28 @@ public class AbbreviationInspection extends BaseJavaLocalInspectionTool {
     /**
      * Constructor.
      */
-    public AbbreviationInspection() {
-        String ggHome = System.getenv("GRIDGAIN_HOME");
+    public GridAbbreviationInspection() {
+        String ggHome = System.getProperty(PROJECT_HOME_PROP_NAME);
 
         if (ggHome == null) {
-            userMsg = "GRIDGAIN_HOME environment variable was not found. Using hard-coded abbreviation table.";
+            userMsg = PROJECT_HOME_PROP_NAME + " JVM property is not set. Using default abbreviation rules from " +
+                "plugin resources.";
 
-            abbreviationRules = AbbreviationRules.getInstance(null);
+            abbreviationRules = GridAbbreviationRules.getInstance(null);
         }
         else {
             File abbrevFile = new File(new File(ggHome), "idea" + File.separatorChar + "abbreviation.properties");
 
             if (!abbrevFile.exists() || !abbrevFile.isFile()) {
-                userMsg = "${GRIDGAIN_HOME}/idea/abbreviation.properties was not found. Using hard-coded " +
-                    "abbreviation table.";
+                userMsg = "${" + PROJECT_HOME_PROP_NAME + "}/idea/abbreviation.properties was not found. Using " +
+                    "default abbreviation rules from plugin resources.";
 
-                abbreviationRules = AbbreviationRules.getInstance(null);
+                abbreviationRules = GridAbbreviationRules.getInstance(null);
             }
             else {
                 userMsg = "Using " + abbrevFile.getAbsolutePath() + " as abbreviation rules file.";
 
-                abbreviationRules = AbbreviationRules.getInstance(abbrevFile);
+                abbreviationRules = GridAbbreviationRules.getInstance(abbrevFile);
             }
         }
     }
@@ -259,7 +263,7 @@ public class AbbreviationInspection extends BaseJavaLocalInspectionTool {
     }
 
     public static void main(String[] args) {
-        AbbreviationInspection i = new AbbreviationInspection();
+        GridAbbreviationInspection i = new GridAbbreviationInspection();
 
         assert listsEqual(Arrays.asList("count"), camelCaseParts("count"));
         assert listsEqual(Arrays.asList("Count"), camelCaseParts("Count"));
