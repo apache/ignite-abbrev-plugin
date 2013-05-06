@@ -13,6 +13,7 @@ import com.intellij.codeInsight.daemon.*;
 import com.intellij.codeInspection.*;
 import com.intellij.openapi.project.*;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.java.*;
 import com.intellij.psi.javadoc.*;
 import org.jetbrains.annotations.*;
 
@@ -149,7 +150,7 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
             @Override public void visitClass(PsiClass cls) {
                 PsiIdentifier nameId = cls.getNameIdentifier();
 
-                if (nameId != null && !hasComment(cls))
+                if (nameId != null && !(cls instanceof PsiTypeParameterImpl) && !hasComment(cls))
                     holder.registerProblem(nameId, getDisplayName());
             }
 
