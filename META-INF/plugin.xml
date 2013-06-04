@@ -26,6 +26,18 @@
         </intentionAction>
 
         <intentionAction>
+            <className>org.gridgain.intention.GridGetterGenerator</className>
+            <category>Getter Setter</category>
+            <descriptionDirectoryName>GridGetterGenerator</descriptionDirectoryName>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.gridgain.intention.GridSetterGenerator</className>
+            <category>Getter Setter</category>
+            <descriptionDirectoryName>GridSetterGenerator</descriptionDirectoryName>
+        </intentionAction>
+
+        <intentionAction>
             <className>org.gridgain.intention.GridGetterSetterSubstitutor</className>
             <category>Getter Setter</category>
             <descriptionDirectoryName>GridGetterSetterSubstitutor</descriptionDirectoryName>

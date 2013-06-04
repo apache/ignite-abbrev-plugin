@@ -32,7 +32,30 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
     /** Abbreviation rules. */
     private final GridAbbreviationRules abbrevRules;
 
+    /** Generate getter flag. */
+    private final boolean genGetter;
+
+    /** Generate setter flag. */
+    private final boolean genSetter;
+
+    /**
+     * Default constructor.
+     */
     public GridGetterSetterGenerator() {
+        this(true, true);
+    }
+
+    /**
+     * @param genGetter Generate getter?
+     * @param genSetter Generate setter?
+     */
+    public GridGetterSetterGenerator(boolean genGetter, boolean genSetter) {
+        this.genGetter = genGetter;
+        this.genSetter = genSetter;
+
+        if (!genGetter && !genSetter)
+            throw new IllegalArgumentException("At least one of genGetter or genSetter flags should be true.");
+
         String ggHome = System.getenv("GRIDGAIN_HOME");
 
         if (ggHome == null)
@@ -49,7 +72,14 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
 
     /** {@inheritDoc} */
     @NotNull public String getText() {
-        return "Generate GridGain-style getter and setter";
+        if (genGetter && genSetter)
+            return "Generate GridGain-style getter and setter";
+        else if (genGetter)
+            return "Generate GridGain-style getter";
+        else if (genSetter)
+            return "Generate GridGain-style setter";
+
+        throw new AssertionError("At least one of genGetter or genSetter flags should be true.");
     }
 
     /** {@inheritDoc} */
@@ -72,8 +102,25 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
                 if (psiField == null || psiCls == null)
                     return false;
 
-                // Only applicable if method with field name does not exist.
-                return psiCls.findMethodsByName(psiField.getName(), true).length == 0;
+                PsiElementFactory psiFactory = JavaPsiFacade.getInstance(project).getElementFactory();
+
+                boolean ret = true;
+
+                if (genGetter)
+                    ret = psiCls.findMethodBySignature(
+                        psiFactory.createMethod(psiField.getName(), psiField.getType()),
+                        true
+                    ) == null;
+
+                if (ret && genSetter) {
+                    PsiMethod mtd = psiFactory.createMethod(psiField.getName(), PsiType.VOID);
+
+                    mtd.getParameterList().add(psiFactory.createParameter(psiField.getName(), psiField.getType()));
+
+                    ret = psiCls.findMethodBySignature(mtd, true) == null;
+                }
+
+                return ret;
             }
         }
 
@@ -100,44 +147,49 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
 
         String comment = !docText.isEmpty() ? docText : camelCaseToText(methodName).trim() + '.';
 
-        // Generate getter.
-        PsiMethod psiGetter = psiFactory.createMethod(methodName, psiField.getType());
-
-        PsiCodeBlock psiGetterBody = psiGetter.getBody();
-
-        assert psiGetterBody != null;
-
-        psiGetterBody.add(psiFactory.createStatementFromText("return " + fieldName + ';', null));
-
-        psiGetter.addBefore(
-            psiFactory.createDocCommentFromText(
-                "/**\n* @return " + capitalizeFirst(comment) + "\n*/"),
-            psiGetter.getModifierList());
-
         CodeStyleManager codeStyleMan = CodeStyleManager.getInstance(project);
 
-        psiCls.addBefore(codeStyleMan.reformat(psiGetter), psiCls.getRBrace());
+        // Generate getter.
+        if (genGetter) {
+            PsiMethod psiGetter = psiFactory.createMethod(methodName, psiField.getType());
 
-        PsiModifierList psiFieldModifiers = psiField.getModifierList();
+            PsiCodeBlock psiGetterBody = psiGetter.getBody();
 
-        // Generate setter if field is not final.
-        if (psiFieldModifiers == null || !psiFieldModifiers.hasExplicitModifier("final")) {
-            PsiMethod psiSetter = psiFactory.createMethod(methodName, PsiType.VOID);
+            assert psiGetterBody != null;
 
-            psiSetter.getParameterList().add(psiFactory.createParameter(fieldName, psiField.getType()));
+            psiGetterBody.add(psiFactory.createStatementFromText("return " + fieldName + ';', null));
 
-            PsiCodeBlock psiSetterBody = psiSetter.getBody();
+            psiGetter.addBefore(
+                psiFactory.createDocCommentFromText(
+                    "/**\n* @return " + capitalizeFirst(comment) + "\n*/"),
+                psiGetter.getModifierList());
 
-            assert psiSetterBody != null;
+            psiCls.addBefore(codeStyleMan.reformat(psiGetter), psiCls.getRBrace());
+        }
 
-            psiSetterBody.add(psiFactory.createStatementFromText(
-                "this." + fieldName + " = " + fieldName + ';', null));
 
-            psiSetter.addBefore(psiFactory.createDocCommentFromText(
-                "/**\n* @param " + fieldName + " New " + unCapitalizeFirst(comment) + "\n*/"),
-                psiSetter.getModifierList());
+        if (genSetter) {
+            PsiModifierList psiFieldModifiers = psiField.getModifierList();
 
-            psiCls.addBefore(codeStyleMan.reformat(psiSetter), psiCls.getRBrace());
+            // Generate setter if field is not final.
+            if (psiFieldModifiers == null || !psiFieldModifiers.hasExplicitModifier("final")) {
+                PsiMethod psiSetter = psiFactory.createMethod(methodName, PsiType.VOID);
+
+                psiSetter.getParameterList().add(psiFactory.createParameter(fieldName, psiField.getType()));
+
+                PsiCodeBlock psiSetterBody = psiSetter.getBody();
+
+                assert psiSetterBody != null;
+
+                psiSetterBody.add(psiFactory.createStatementFromText(
+                    "this." + fieldName + " = " + fieldName + ';', null));
+
+                psiSetter.addBefore(psiFactory.createDocCommentFromText(
+                    "/**\n* @param " + fieldName + " New " + unCapitalizeFirst(comment) + "\n*/"),
+                    psiSetter.getModifierList());
+
+                psiCls.addBefore(codeStyleMan.reformat(psiSetter), psiCls.getRBrace());
+            }
         }
     }
 
