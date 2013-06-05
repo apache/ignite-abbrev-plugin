@@ -14,6 +14,10 @@
     </project-components>
 
     <actions>
+        <action id="gg-gen-getter-setter" class="org.gridgain.action.GridGetterSetterAction"
+                text="GridGain style getters and setters">
+            <add-to-group group-id="GenerateGroup"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
