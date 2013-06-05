@@ -92,45 +92,59 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
         if (!element.isWritable()) return false;
 
-        if (element instanceof PsiJavaToken) {
+        PsiField psiField = null;
+
+        if (element instanceof PsiField)
+            psiField = (PsiField)element;
+        else if (element instanceof PsiJavaToken) {
             final PsiJavaToken token = (PsiJavaToken)element;
 
-            if (token.getTokenType() == JavaTokenType.IDENTIFIER && token.getParent() instanceof PsiField) {
-                PsiField psiField = PsiTreeUtil.getParentOfType(element, PsiField.class, true);
-                PsiClass psiCls = PsiTreeUtil.getParentOfType(element, PsiClass.class, true);
-
-                if (psiField == null || psiCls == null)
-                    return false;
-
-                PsiElementFactory psiFactory = JavaPsiFacade.getInstance(project).getElementFactory();
-
-                boolean ret = true;
-
-                if (genGetter)
-                    ret = psiCls.findMethodBySignature(
-                        psiFactory.createMethod(psiField.getName(), psiField.getType()),
-                        true
-                    ) == null;
-
-                if (ret && genSetter) {
-                    PsiMethod mtd = psiFactory.createMethod(psiField.getName(), PsiType.VOID);
-
-                    mtd.getParameterList().add(psiFactory.createParameter(psiField.getName(), psiField.getType()));
-
-                    ret = psiCls.findMethodBySignature(mtd, true) == null;
-                }
-
-                return ret;
-            }
+            if (token.getTokenType() == JavaTokenType.IDENTIFIER && token.getParent() instanceof PsiField)
+                psiField = PsiTreeUtil.getParentOfType(element, PsiField.class, true);
         }
 
-        return false;
+        if (psiField == null)
+            return false;
+
+        PsiClass psiCls = PsiTreeUtil.getParentOfType(element, PsiClass.class, true);
+
+        if (psiCls == null)
+            return false;
+
+        PsiElementFactory psiFactory = JavaPsiFacade.getInstance(project).getElementFactory();
+
+        boolean ret = true;
+
+        if (genGetter)
+            ret = psiCls.findMethodBySignature(
+                psiFactory.createMethod(psiField.getName(), psiField.getType()),
+                true
+            ) == null;
+
+        if (ret && genSetter) {
+            PsiModifierList psiFieldModifiers = psiField.getModifierList();
+
+            // If field is not final.
+            if (psiFieldModifiers == null || !psiFieldModifiers.hasExplicitModifier("final")) {
+                PsiMethod mtd = psiFactory.createMethod(psiField.getName(), PsiType.VOID);
+
+                mtd.getParameterList().add(psiFactory.createParameter(psiField.getName(), psiField.getType()));
+
+                ret = psiCls.findMethodBySignature(mtd, true) == null;
+            }
+            else
+                ret = false;
+        }
+
+        return ret;
     }
 
     /** {@inheritDoc} */
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element)
         throws IncorrectOperationException {
-        PsiField psiField = PsiTreeUtil.getParentOfType(element, PsiField.class, true);
+        PsiField psiField = element instanceof PsiField ?
+            (PsiField)element :
+            PsiTreeUtil.getParentOfType(element, PsiField.class, true);
         PsiClass psiCls = PsiTreeUtil.getParentOfType(element, PsiClass.class, true);
 
         if (psiField == null || psiCls == null)
@@ -166,7 +180,6 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
 
             psiCls.addBefore(codeStyleMan.reformat(psiGetter), psiCls.getRBrace());
         }
-
 
         if (genSetter) {
             PsiModifierList psiFieldModifiers = psiField.getModifierList();
