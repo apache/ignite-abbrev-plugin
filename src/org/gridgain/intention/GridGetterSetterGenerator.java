@@ -18,8 +18,6 @@ import com.intellij.util.*;
 import org.gridgain.inspection.abbrev.*;
 import org.jetbrains.annotations.*;
 
-import java.io.*;
-
 import static org.gridgain.util.GridStringUtils.*;
 
 /**
@@ -30,7 +28,7 @@ import static org.gridgain.util.GridStringUtils.*;
  */
 public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction implements IntentionAction {
     /** Abbreviation rules. */
-    private final GridAbbreviationRules abbrevRules;
+    private final GridAbbreviationRules abbrevRules = GridAbbreviationRules.getInstance();
 
     /** Generate getter flag. */
     private final boolean genGetter;
@@ -55,19 +53,6 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
 
         if (!genGetter && !genSetter)
             throw new IllegalArgumentException("At least one of genGetter or genSetter flags should be true.");
-
-        String ggHome = System.getenv("GRIDGAIN_HOME");
-
-        if (ggHome == null)
-            abbrevRules = GridAbbreviationRules.getInstance(null);
-        else {
-            File abbrevFile = new File(new File(ggHome), "idea" + File.separatorChar + "abbreviation.properties");
-
-            if (!abbrevFile.exists() || !abbrevFile.isFile())
-                abbrevRules = GridAbbreviationRules.getInstance(null);
-            else
-                abbrevRules = GridAbbreviationRules.getInstance(abbrevFile);
-        }
     }
 
     /** {@inheritDoc} */

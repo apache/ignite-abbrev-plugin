@@ -23,6 +23,9 @@ import java.util.concurrent.atomic.*;
  * @version @java.version
  */
 public class GridAbbreviationRules {
+    /** Project home JVM property name. */
+    private static final String PROJECT_HOME_PROP_NAME = "GRIDGAIN_PROJECT_HOME";
+
     /** File refresh frequency. */
     private static final int FILE_REFRESH_FREQ = 5000;
 
@@ -47,16 +50,35 @@ public class GridAbbreviationRules {
     /** Singleton init latch. */
     private static CountDownLatch singletonInitLatch = new CountDownLatch(1);
 
+    /** Abbreviation file used. */
+    private final File file;
+
     /**
      * Singleton factory.
      *
-     * @param file Abbreviations file.
      * @return Instance of abbreviation rules.
      */
-    public static GridAbbreviationRules getInstance(@Nullable File file) {
+    public static GridAbbreviationRules getInstance() {
         try {
             if (initFlag.compareAndSet(false, true)) {
-                instance = new GridAbbreviationRules(file);
+                String ggHome = System.getProperty(PROJECT_HOME_PROP_NAME);
+
+                if (ggHome != null) {
+                    File abbrevFile =
+                        new File(new File(ggHome), "idea" + File.separatorChar + "abbreviation.properties");
+
+                    if (!abbrevFile.exists() || !abbrevFile.isFile()) {
+                        System.err.println(
+                            "${" + PROJECT_HOME_PROP_NAME + "}/idea/abbreviation.properties was not found. Using " +
+                            "default abbreviation rules from plugin resources.");
+
+                        instance = new GridAbbreviationRules(null);
+                    }
+                    else
+                        instance = new GridAbbreviationRules(abbrevFile);
+                }
+                else
+                    instance = new GridAbbreviationRules(null);
 
                 singletonInitLatch.countDown();
             }
@@ -77,7 +99,9 @@ public class GridAbbreviationRules {
      *
      * @param file Abbreviations file or {@code null} if internal rules should be used.
      */
-    private GridAbbreviationRules(File file) {
+    private GridAbbreviationRules(@Nullable File file) {
+        this.file = file;
+
         if (file == null) {
             InputStream is = getClass().getResourceAsStream("/abbreviation.properties");
 
@@ -175,6 +199,13 @@ public class GridAbbreviationRules {
 
             return null;
         }
+    }
+
+    /**
+     * @return Abbreviation file used.
+     */
+    public File getFile() {
+        return file;
     }
 
     /**

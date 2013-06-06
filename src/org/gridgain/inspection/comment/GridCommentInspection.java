@@ -13,11 +13,15 @@ import com.intellij.codeInsight.daemon.*;
 import com.intellij.codeInspection.*;
 import com.intellij.openapi.project.*;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.*;
 import com.intellij.psi.impl.source.tree.java.*;
 import com.intellij.psi.javadoc.*;
+import org.gridgain.inspection.abbrev.*;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
+
+import static org.gridgain.util.GridStringUtils.*;
 
 /**
  * Inspection that searches for uncommented fields, methods,
@@ -27,6 +31,9 @@ import java.util.*;
  * @version @java.version
  */
 public class GridCommentInspection extends BaseJavaLocalInspectionTool {
+    /** Abbreviation rules. */
+    private final GridAbbreviationRules abbrevRules = GridAbbreviationRules.getInstance();
+
     /** {@inheritDoc} */
     @NotNull @Override public String getGroupDisplayName() {
         return GroupNames.STYLE_GROUP_NAME;
@@ -49,22 +56,55 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
             /** {@inheritDoc} */
             @Override public void visitField(final PsiField field) {
                 if (!hasComment(field)) {
-                    holder.registerProblem(field.getNameIdentifier(), getDisplayName(), new LocalQuickFix() {
-                        @NotNull @Override public String getName() {
-                            return "Add empty comment";
-                        }
+                    holder.registerProblem(
+                        field.getNameIdentifier(),
+                        getDisplayName(),
+                        new LocalQuickFix() {
+                            @NotNull @Override public String getName() {
+                                return "Add empty comment";
+                            }
 
-                        @NotNull @Override public String getFamilyName() {
-                            return "";
-                        }
+                            @NotNull @Override public String getFamilyName() {
+                                return "";
+                            }
 
-                        @Override public void applyFix(@NotNull Project project,
-                            @NotNull ProblemDescriptor desc) {
-                            PsiElementFactory factory = JavaPsiFacade.getInstance(project).getElementFactory();
+                            @Override public void applyFix(@NotNull Project project,
+                                @NotNull ProblemDescriptor desc) {
+                                PsiElementFactory factory = JavaPsiFacade.getInstance(project).getElementFactory();
 
-                            field.addBefore(factory.createDocCommentFromText("/** */"), field.getModifierList());
-                        }
-                    });
+                                field.addBefore(factory.createDocCommentFromText("/** */"), field.getModifierList());
+                            }
+                        },
+                        new LocalQuickFix() {
+                            @NotNull @Override public String getName() {
+                                return "Add default comment";
+                            }
+
+                            @NotNull @Override public String getFamilyName() {
+                                return "";
+                            }
+
+                            @Override public void applyFix(@NotNull Project project,
+                                @NotNull ProblemDescriptor descriptor) {
+                                PsiElementFactory factory = JavaPsiFacade.getInstance(project).getElementFactory();
+
+                                field.addBefore(
+                                    factory.createDocCommentFromText(
+                                        "/** " + camelCaseToTextUnwrapAbbrev(field.getName()) + ". */"),
+                                    field.getModifierList());
+                            }
+
+                            private String camelCaseToTextUnwrapAbbrev(String camelCase) {
+                                return transformCamelCase(camelCase, new Closure2<String, Integer, String>() {
+                                    @Override public String apply(String part, Integer idx) {
+                                        String unw = abbrevRules.getUnwrapping(part);
+                                        String ret = unw != null ? unw : part;
+
+                                        return idx == 0 ? capitalizeFirst(ret) : " " + ret.toLowerCase();
+                                    }
+                                });
+                            }
+                        });
                 }
             }
 
@@ -82,7 +122,8 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                     if (cls == null)
                         return;
 
-                    if (cls.getNameIdentifier() == null)
+                    if (cls.getNameIdentifier() == null &&
+                        cls.getNode().getElementType() != JavaElementType.ENUM_CONSTANT_INITIALIZER)
                         return;
 
                     PsiMethod[] supers = mtd.findSuperMethods();

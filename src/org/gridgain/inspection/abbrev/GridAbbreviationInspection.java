@@ -28,43 +28,8 @@ import static org.gridgain.util.GridStringUtils.*;
  * @version @java.version
  */
 public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
-    /** Project home JVM property name. */
-    private static final String PROJECT_HOME_PROP_NAME = "GRIDGAIN_PROJECT_HOME";
-
     /** Abbreviation rules. */
-    private GridAbbreviationRules abbreviationRules;
-
-    /** User message for options panel. */
-    private String userMsg;
-
-    /**
-     * Constructor.
-     */
-    public GridAbbreviationInspection() {
-        String ggHome = System.getProperty(PROJECT_HOME_PROP_NAME);
-
-        if (ggHome == null) {
-            userMsg = PROJECT_HOME_PROP_NAME + " JVM property is not set. Using default abbreviation rules from " +
-                "plugin resources.";
-
-            abbreviationRules = GridAbbreviationRules.getInstance(null);
-        }
-        else {
-            File abbrevFile = new File(new File(ggHome), "idea" + File.separatorChar + "abbreviation.properties");
-
-            if (!abbrevFile.exists() || !abbrevFile.isFile()) {
-                userMsg = "${" + PROJECT_HOME_PROP_NAME + "}/idea/abbreviation.properties was not found. Using " +
-                    "default abbreviation rules from plugin resources.";
-
-                abbreviationRules = GridAbbreviationRules.getInstance(null);
-            }
-            else {
-                userMsg = "Using " + abbrevFile.getAbsolutePath() + " as abbreviation rules file.";
-
-                abbreviationRules = GridAbbreviationRules.getInstance(abbrevFile);
-            }
-        }
-    }
+    private GridAbbreviationRules abbreviationRules = GridAbbreviationRules.getInstance();
 
     /** {@inheritDoc} */
     @NotNull @Override public String getGroupDisplayName() {
@@ -155,7 +120,11 @@ public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
     @Override public javax.swing.JComponent createOptionsPanel() {
         javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        javax.swing.JLabel msg = new javax.swing.JLabel(userMsg);
+        File abbrevFile = abbreviationRules.getFile();
+
+        javax.swing.JLabel msg = new javax.swing.JLabel(
+            abbrevFile != null ? "Using abbreviation file: " + abbrevFile.getAbsolutePath() :
+            "Using default abbreviation file from plugin resources.");
 
         panel.add(msg);
 
