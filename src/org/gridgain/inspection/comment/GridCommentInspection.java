@@ -55,6 +55,15 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
         return new JavaElementVisitor() {
             /** {@inheritDoc} */
             @Override public void visitField(final PsiField field) {
+                final PsiClass cls = field.getContainingClass();
+
+                if (cls == null)
+                    return;
+
+                // Don't display warning for anonymous classes.
+                if (isAnonymousClass(cls))
+                    return;
+
                 if (!hasComment(field)) {
                     holder.registerProblem(
                         field.getNameIdentifier(),
@@ -116,14 +125,13 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                     if (mtdNameId == null)
                         return;
 
-                    // Don't display warning for anonymous classes.
                     final PsiClass cls = mtd.getContainingClass();
 
                     if (cls == null)
                         return;
 
-                    if (cls.getNameIdentifier() == null &&
-                        cls.getNode().getElementType() != JavaElementType.ENUM_CONSTANT_INITIALIZER)
+                    // Don't display warning for anonymous classes.
+                    if (isAnonymousClass(cls))
                         return;
 
                     PsiMethod[] supers = mtd.findSuperMethods();
@@ -205,6 +213,18 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                 PsiDocComment comment = elem.getDocComment();
 
                 return comment != null && comment.getText() != null && !comment.getText().isEmpty();
+            }
+
+            /**
+             * Checks if a class is anonymous.
+             *
+             * @param cls Class to check.
+             * @return {@code true} if class is anonymous, {@code false}
+             *         otherwise.
+             */
+            private boolean isAnonymousClass(PsiClass cls) {
+                return (cls.getNameIdentifier() == null && cls.getNode().getElementType() !=
+                    JavaElementType.ENUM_CONSTANT_INITIALIZER);
             }
 
             /**
