@@ -173,17 +173,19 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
             if (psiFieldModifiers == null || !psiFieldModifiers.hasExplicitModifier("final")) {
                 PsiMethod psiSetter = psiFactory.createMethod(methodName, PsiType.VOID);
 
-                psiSetter.getParameterList().add(psiFactory.createParameter(fieldName, psiField.getType()));
+                String paramName = paramName(fieldName);
+
+                psiSetter.getParameterList().add(psiFactory.createParameter(paramName, psiField.getType()));
 
                 PsiCodeBlock psiSetterBody = psiSetter.getBody();
 
                 assert psiSetterBody != null;
 
                 psiSetterBody.add(psiFactory.createStatementFromText(
-                    "this." + fieldName + " = " + fieldName + ';', null));
+                    (fieldName.equals(paramName) ? "this." : "") + fieldName + " = " + paramName + ';', null));
 
                 psiSetter.addBefore(psiFactory.createDocCommentFromText(
-                    "/**\n* @param " + fieldName + " New " + unCapitalizeFirst(comment) + "\n*/"),
+                    "/**\n* @param " + paramName + " New " + unCapitalizeFirst(comment) + "\n*/"),
                     psiSetter.getModifierList());
 
                 psiCls.addBefore(codeStyleMan.reformat(psiSetter), psiCls.getRBrace());
@@ -227,6 +229,23 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
             @Override public String apply(String part, Integer idx) {
                 String unw = abbrevRules.getUnwrapping(part);
                 String ret = unw != null ? unw : part;
+
+                return idx > 0 ? capitalizeFirst(ret) : ret.toLowerCase();
+            }
+        });
+    }
+
+    /**
+     * Transforms a field name to setter parameter name.\
+     *
+     * @param fieldName Field name.
+     * @return Parameter name.
+     */
+    private String paramName(String fieldName) {
+        return transformCamelCase(fieldName, new Closure2<String, Integer, String>() {
+            @Override public String apply(String part, Integer idx) {
+                String abbr = abbrevRules.getAbbreviation(part);
+                String ret = abbr != null ? abbr : part;
 
                 return idx > 0 ? capitalizeFirst(ret) : ret.toLowerCase();
             }
