@@ -106,10 +106,13 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                             private String camelCaseToTextUnwrapAbbrev(String camelCase) {
                                 return transformCamelCase(camelCase, new Closure2<String, Integer, String>() {
                                     @Override public String apply(String part, Integer idx) {
+                                        if ("_".equals(part))
+                                            return "";
+
                                         String unw = abbrevRules.getUnwrapping(part);
                                         String ret = unw != null ? unw : part;
 
-                                        return idx == 0 ? capitalizeFirst(ret) : " " + ret.toLowerCase();
+                                        return idx == 0 ? capitalizeFirst(ret.toLowerCase()) : " " + ret.toLowerCase();
                                     }
                                 });
                             }

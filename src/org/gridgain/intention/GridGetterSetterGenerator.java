@@ -227,6 +227,9 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
     private String methodName(String fieldName) {
         return transformCamelCase(fieldName, new Closure2<String, Integer, String>() {
             @Override public String apply(String part, Integer idx) {
+                if ("_".equals(part))
+                    return "";
+
                 String unw = abbrevRules.getUnwrapping(part);
                 String ret = unw != null ? unw : part;
 
@@ -236,7 +239,7 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
     }
 
     /**
-     * Transforms a field name to setter parameter name.\
+     * Transforms a field name to setter parameter name.
      *
      * @param fieldName Field name.
      * @return Parameter name.
@@ -244,6 +247,9 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
     private String paramName(String fieldName) {
         return transformCamelCase(fieldName, new Closure2<String, Integer, String>() {
             @Override public String apply(String part, Integer idx) {
+                if ("_".equals(part))
+                    return "";
+
                 String abbr = abbrevRules.getAbbreviation(part);
                 String ret = abbr != null ? abbr : part;
 
