@@ -19,8 +19,6 @@ import com.intellij.psi.javadoc.*;
 import org.gridgain.inspection.abbrev.*;
 import org.jetbrains.annotations.*;
 
-import java.util.*;
-
 import static org.gridgain.util.GridStringUtils.*;
 
 /**
@@ -102,20 +100,6 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                                         "/** " + camelCaseToTextUnwrapAbbrev(field.getName()) + ". */"),
                                     field.getModifierList());
                             }
-
-                            private String camelCaseToTextUnwrapAbbrev(String camelCase) {
-                                return transformCamelCase(camelCase, new Closure2<String, Integer, String>() {
-                                    @Override public String apply(String part, Integer idx) {
-                                        if ("_".equals(part))
-                                            return "";
-
-                                        String unw = abbrevRules.getUnwrapping(part);
-                                        String ret = unw != null ? unw : part;
-
-                                        return idx == 0 ? capitalizeFirst(ret.toLowerCase()) : " " + ret.toLowerCase();
-                                    }
-                                });
-                            }
                         });
                 }
             }
@@ -137,61 +121,95 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                     if (isAnonymousClass(cls))
                         return;
 
-                    PsiMethod[] supers = mtd.findSuperMethods();
-
                     LocalQuickFix[] fix = null;
 
-                    if (supers.length > 0) { // If there is a super method, we can apply {@inheritDoc} fix.
-                        // Other overridden/implemented methods with empty comments.
-                        final Collection<PsiMethod> similarMtds = new LinkedList<PsiMethod>();
+                    // If method is a constructor, we can generate default comment.
+                    if (mtd.isConstructor()) {
+                        fix = new LocalQuickFix[] {
+                            new LocalQuickFix() {
+                                @NotNull @Override public String getName() {
+                                    return "Add default comment";
+                                }
 
-                        for (PsiMethod mtd0 : cls.getMethods()) {
-                            if (mtd0 != mtd && !hasComment(mtd0) && mtd0.findSuperMethods().length > 0)
-                                similarMtds.add(mtd0);
-                        }
+                                @NotNull @Override public String getFamilyName() {
+                                    return "";
+                                }
 
-                        LocalQuickFix fixOne = new LocalQuickFix() {
-                            @NotNull @Override public String getName() {
-                                return "Add /** {@inheritDoc} */";
-                            }
+                                @Override public void applyFix(@NotNull Project project,
+                                    @NotNull ProblemDescriptor descriptor) {
+                                    StringBuilder sb = new StringBuilder("/**\n");
 
-                            @NotNull @Override public String getFamilyName() {
-                                return "";
-                            }
+                                    PsiParameter[] params = mtd.getParameterList().getParameters();
 
-                            @Override public void applyFix(@NotNull Project project,
-                                @NotNull ProblemDescriptor descriptor) {
-                                addInheritDoc(mtd, JavaPsiFacade.getInstance(project).getElementFactory());
+                                    if (params.length > 0) {
+                                        for (PsiParameter param : params)
+                                            sb.append("* @param ").append(param.getName()).append(' ')
+                                                .append(camelCaseToTextUnwrapAbbrev(param.getName())).append(".\n");
+                                    }
+                                    else
+                                        sb.append("* Default constructor")
+                                            .append(isExternalizable(cls) ? " (required by Externalizable)" : "")
+                                            .append(".\n");
+
+                                    sb.append("*/");
+
+                                    PsiElementFactory factory = JavaPsiFacade.getInstance(project).getElementFactory();
+
+                                    mtd.addBefore(
+                                        factory.createDocCommentFromText(sb.toString()),
+                                        mtd.getModifierList());
+                                }
+
+                                private boolean isExternalizable(PsiClass cls) {
+                                    for (PsiClass iface : cls.getInterfaces()) {
+                                        if ("java.io.Externalizable".equals(iface.getQualifiedName()))
+                                            return true;
+                                    }
+
+                                    return false;
+                                }
                             }
                         };
+                    }
+                    // If there is a super method, we can apply {@inheritDoc} fix.
+                    else if (mtd.findSuperMethods().length > 0) {
+                        fix = new LocalQuickFix[] {
+                            new LocalQuickFix() {
+                                @NotNull @Override public String getName() {
+                                    return "Add /** {@inheritDoc} */";
+                                }
 
-                        if (!similarMtds.isEmpty()) {
-                            fix = new LocalQuickFix[] {
-                                new LocalQuickFix() {
-                                    @NotNull @Override public String getName() {
-                                        return "Add /** {@inheritDoc} */ for all overridden/implemented methods";
-                                    }
+                                @NotNull @Override public String getFamilyName() {
+                                    return "";
+                                }
 
-                                    @NotNull @Override public String getFamilyName() {
-                                        return "";
-                                    }
+                                @Override public void applyFix(@NotNull Project project,
+                                    @NotNull ProblemDescriptor descriptor) {
+                                    addInheritDoc(mtd, JavaPsiFacade.getInstance(project).getElementFactory());
+                                }
+                            },
+                            new LocalQuickFix() {
+                                @NotNull @Override public String getName() {
+                                    return "Add /** {@inheritDoc} */ for all overridden/implemented methods";
+                                }
 
-                                    @Override public void applyFix(@NotNull Project project,
-                                        @NotNull ProblemDescriptor descriptor) {
-                                        PsiElementFactory factory =
-                                            JavaPsiFacade.getInstance(project).getElementFactory();
+                                @NotNull @Override public String getFamilyName() {
+                                    return "";
+                                }
 
-                                        for (PsiMethod mtd0 : similarMtds)
+                                @Override public void applyFix(@NotNull Project project,
+                                    @NotNull ProblemDescriptor descriptor) {
+                                    PsiElementFactory factory =
+                                        JavaPsiFacade.getInstance(project).getElementFactory();
+
+                                    for (PsiMethod mtd0 : cls.getMethods()) {
+                                        if (mtd0 == mtd ||
+                                            (!hasComment(mtd0) && mtd0.findSuperMethods().length > 0))
                                             addInheritDoc(mtd0, factory);
-
-                                        addInheritDoc(mtd, factory);
                                     }
-                                },
-                                fixOne
-                            };
-                        }
-                        else
-                            fix = new LocalQuickFix[] { fixOne };
+                                }
+                            }
+                        };
                     }
 
                     holder.registerProblem(mtdNameId, getDisplayName(), fix);
@@ -242,5 +260,25 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                     mtd.getModifierList());
             }
         };
+    }
+
+    /**
+     * Converts camel case to simple text, unwrapping abbreviations.
+     *
+     * @param camelCase Camel case string.
+     * @return Resulting text.
+     */
+    private String camelCaseToTextUnwrapAbbrev(String camelCase) {
+        return transformCamelCase(camelCase, new Closure2<String, Integer, String>() {
+            @Override public String apply(String part, Integer idx) {
+                if ("_".equals(part))
+                    return "";
+
+                String unw = abbrevRules.getUnwrapping(part);
+                String ret = unw != null ? unw : part;
+
+                return idx == 0 ? capitalizeFirst(ret.toLowerCase()) : " " + ret.toLowerCase();
+            }
+        });
     }
 }
