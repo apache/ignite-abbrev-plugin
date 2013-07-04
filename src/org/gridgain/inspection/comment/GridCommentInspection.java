@@ -19,7 +19,7 @@ import com.intellij.psi.javadoc.*;
 import org.gridgain.inspection.abbrev.*;
 import org.jetbrains.annotations.*;
 
-import static org.gridgain.util.GridStringUtils.*;
+import static org.gridgain.util.GridUtils.*;
 
 /**
  * Inspection that searches for uncommented fields, methods,

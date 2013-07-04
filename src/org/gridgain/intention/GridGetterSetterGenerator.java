@@ -15,10 +15,11 @@ import com.intellij.psi.codeStyle.*;
 import com.intellij.psi.javadoc.*;
 import com.intellij.psi.util.*;
 import com.intellij.util.*;
+import org.gridgain.*;
 import org.gridgain.inspection.abbrev.*;
 import org.jetbrains.annotations.*;
 
-import static org.gridgain.util.GridStringUtils.*;
+import static org.gridgain.util.GridUtils.*;
 
 /**
  * Intention action for generating GridGain-style getter and setter.
@@ -35,6 +36,9 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
 
     /** Generate setter flag. */
     private final boolean genSetter;
+
+    /** Insertion point selector. */
+    private final GridMethodInsertionPointSelector insPtSel = new GridMethodInsertionPointSelector();
 
     /**
      * Default constructor.
@@ -163,7 +167,9 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
                     "/**\n* @return " + capitalizeFirst(comment) + "\n*/"),
                 psiGetter.getModifierList());
 
-            psiCls.addBefore(codeStyleMan.reformat(psiGetter), psiCls.getRBrace());
+            psiCls.addAfter(
+                codeStyleMan.reformat(psiGetter),
+                insPtSel.select(psiCls, psiGetter));
         }
 
         if (genSetter) {
@@ -188,7 +194,9 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
                     "/**\n* @param " + paramName + " New " + unCapitalizeFirst(comment) + "\n*/"),
                     psiSetter.getModifierList());
 
-                psiCls.addBefore(codeStyleMan.reformat(psiSetter), psiCls.getRBrace());
+                psiCls.addAfter(
+                    codeStyleMan.reformat(psiSetter),
+                    insPtSel.select(psiCls, psiSetter));
             }
         }
     }
