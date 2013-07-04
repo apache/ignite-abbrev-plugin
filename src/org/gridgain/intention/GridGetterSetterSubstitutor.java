@@ -74,7 +74,7 @@ public class GridGetterSetterSubstitutor  extends PsiElementBaseIntentionAction 
             if (methodNameMatches(methodName)) {
                 rFactory.createRename(
                     psiMethod,
-                    GridStringUtils.unCapitalizeFirst(methodName.substring(3)),
+                    GridUtils.unCapitalizeFirst(methodName.substring(3)),
                     false,
                     false)
                 .run();

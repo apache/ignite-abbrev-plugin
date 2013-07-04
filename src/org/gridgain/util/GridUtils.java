@@ -9,15 +9,17 @@
 
 package org.gridgain.util;
 
+import org.jetbrains.annotations.*;
+
 import java.util.*;
 
 /**
- * Various string-related utility methods.
+ * Various utility methods.
  *
  * @author @java.author
  * @version @java.version
  */
-public abstract class GridStringUtils {
+public abstract class GridUtils {
     /**
      * Input-output closure with 2 input parameters.
      */
@@ -234,5 +236,30 @@ public abstract class GridStringUtils {
             sb.append(c.apply(parts[i], i));
 
         return sb.toString();
+    }
+
+    /**
+     * Finds the minimal element from the specified array
+     * in terms of specified closure.
+     *
+     * @param comp A 'minimum' definition, i.e. a comparator for
+     *             passed values.
+     * @param elems Elements, from which to find a minimum.
+     * @param <T> Element type.
+     * @return A minimal element or null, if an array is empty.
+     */
+    public static @Nullable <T> T min(Comparator<T> comp, T ... elems) {
+        T ret = null;
+
+        for (T elem : elems) {
+            if (ret != null) {
+                if (elem != null && comp.compare(elem, ret) < 0) // elem < ret
+                    ret = elem;
+            }
+            else
+                ret = elem;
+        }
+
+        return ret;
     }
 }

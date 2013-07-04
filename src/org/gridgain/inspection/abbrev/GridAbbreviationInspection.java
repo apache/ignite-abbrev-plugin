@@ -18,7 +18,7 @@ import org.jetbrains.annotations.*;
 import java.io.*;
 import java.util.*;
 
-import static org.gridgain.util.GridStringUtils.*;
+import static org.gridgain.util.GridUtils.*;
 
 /**
  * Inspection that checks variable names for usage of restricted words that
