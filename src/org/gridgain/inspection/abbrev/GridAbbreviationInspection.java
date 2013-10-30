@@ -103,7 +103,7 @@ public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
                 for (String part : nameParts) {
                     if (getAbbreviation(part) != null) {
                         holder.registerProblem(el, "Abbreviation should be used",
-                            new RenameToFix(replaceWithAbbreviations(nameParts)));
+                            new RenameToFix(abbreviationRules.replaceWithAbbreviations(nameParts)));
 
                         break;
                     }
@@ -181,47 +181,6 @@ public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
     }
 
     /**
-     * Constructs abbreviated name from parts of wrong name.
-     *
-     * @param oldNameParts Split of variable name.
-     * @return Abbreviated variable name.
-     */
-    private String replaceWithAbbreviations(List<String> oldNameParts) {
-        StringBuilder sb = new StringBuilder();
-
-        for (String part : oldNameParts) {
-            String abbrev = getAbbreviation(part);
-
-            if (abbrev == null)
-                 sb.append(part);
-            else {
-                // Only the following cases are possible: count, Count and COUNT since
-                // parser splits tokens based on this rule.
-                int pos = sb.length();
-
-                sb.append(abbrev);
-
-                if (Character.isUpperCase(part.charAt(0))) {
-                    sb.setCharAt(pos, Character.toUpperCase(sb.charAt(pos)));
-
-                    pos++;
-
-                    if (Character.isUpperCase(part.charAt(part.length() - 1))) {
-                        // Full abbreviation, like COUNT
-                        while (pos < sb.length()) {
-                            sb.setCharAt(pos, Character.toUpperCase(sb.charAt(pos)));
-
-                            pos++;
-                        }
-                    }
-                }
-            }
-        }
-
-        return sb.toString();
-    }
-
-    /**
      * Performs lookup of name part in abbreviation table.
      *
      * @param namePart Name part to lookup.
@@ -229,42 +188,5 @@ public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
      */
     @Nullable private String getAbbreviation(String namePart) {
         return abbreviationRules.getAbbreviation(namePart);
-    }
-
-    public static void main(String[] args) {
-        GridAbbreviationInspection i = new GridAbbreviationInspection();
-
-        assert listsEqual(Arrays.asList("count"), camelCaseParts("count"));
-        assert listsEqual(Arrays.asList("Count"), camelCaseParts("Count"));
-        assert listsEqual(Arrays.asList("Count", "1"), camelCaseParts("Count1"));
-        assert listsEqual(Arrays.asList("my", "Count"), camelCaseParts("myCount"));
-        assert listsEqual(Arrays.asList("my", "Count"), camelCaseParts("myCount"));
-        assert listsEqual(Arrays.asList("MY", "_", "COUNT"), camelCaseParts("MY_COUNT"));
-        assert listsEqual(Arrays.asList("MY", "_", "COUNT", "1"), camelCaseParts("MY_COUNT1"));
-        assert listsEqual(Arrays.asList("_", "_", "my", "_", "Count"), camelCaseParts("__my_Count"));
-        assert listsEqual(Arrays.asList("my", "123", "Count"), camelCaseParts("my123Count"));
-        assert listsEqual(Arrays.asList("my", "_","123", "_", "Count"), camelCaseParts("my_123_Count"));
-        assert listsEqual(Arrays.asList("my","BIG", "Count"), camelCaseParts("myBIGCount"));
-        assert listsEqual(Arrays.asList("my","BIG", "_", "count"), camelCaseParts("myBIG_count"));
-        assert listsEqual(Arrays.asList("my","1", "BIG", "2", "count"), camelCaseParts("my1BIG2count"));
-        assert listsEqual(Arrays.asList("my","1", "BIG", "2", "Count"), camelCaseParts("my1BIG2Count"));
-
-
-        assert "cnt".equals(i.replaceWithAbbreviations(camelCaseParts("count")));
-        assert "Cnt".equals(i.replaceWithAbbreviations(camelCaseParts("Count")));
-        assert "myCnt".equals(i.replaceWithAbbreviations(camelCaseParts("myCount")));
-        assert "MY_CNT".equals(i.replaceWithAbbreviations(camelCaseParts("MY_COUNT")));
-    }
-
-    private static boolean listsEqual(List<String> one, List<String> two) {
-        if (one.size() != two.size())
-            return false;
-
-        for (int i = 0; i < one.size(); i++) {
-            if (!one.get(i).equals(two.get(i)))
-                return false;
-        }
-
-        return true;
     }
 }
