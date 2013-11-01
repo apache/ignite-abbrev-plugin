@@ -117,6 +117,10 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                     if (cls == null)
                         return;
 
+                    // Workaround for a noticed accidental error.
+                    if (mtd.getParent() == null)
+                        return;
+
                     // Don't display warning for anonymous classes.
                     if (isAnonymousClass(cls))
                         return;
