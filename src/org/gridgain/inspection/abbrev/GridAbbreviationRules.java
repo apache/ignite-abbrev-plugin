@@ -209,6 +209,47 @@ public class GridAbbreviationRules {
     }
 
     /**
+     * Constructs abbreviated name from parts of wrong name.
+     *
+     * @param oldNameParts Split of variable name.
+     * @return Abbreviated variable name.
+     */
+    public String replaceWithAbbreviations(List<String> oldNameParts) {
+        StringBuilder sb = new StringBuilder();
+
+        for (String part : oldNameParts) {
+            String abbrev = getAbbreviation(part);
+
+            if (abbrev == null)
+                sb.append(part);
+            else {
+                // Only the following cases are possible: count, Count and COUNT since
+                // parser splits tokens based on this rule.
+                int pos = sb.length();
+
+                sb.append(abbrev);
+
+                if (Character.isUpperCase(part.charAt(0))) {
+                    sb.setCharAt(pos, Character.toUpperCase(sb.charAt(pos)));
+
+                    pos++;
+
+                    if (Character.isUpperCase(part.charAt(part.length() - 1))) {
+                        // Full abbreviation, like COUNT
+                        while (pos < sb.length()) {
+                            sb.setCharAt(pos, Character.toUpperCase(sb.charAt(pos)));
+
+                            pos++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
      * Thread that watches for abbreviation file changes.
      */
     private class AbbreviationFileWatcher implements Runnable {
