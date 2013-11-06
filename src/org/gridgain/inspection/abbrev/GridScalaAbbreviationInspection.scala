@@ -28,10 +28,13 @@ import com.intellij.refactoring.{RenameRefactoring, JavaRefactoringFactory}
  */
 class GridScalaAbbreviationInspection extends LocalInspectionTool {
     /** Abbreviation rules. */
-    val abbreviationRules = GridAbbreviationRules.getInstance
+    val abbrRules = GridAbbreviationRules.getInstance
+
+    /** Abbreviation exceptions. */
+    val abbrExceptions = Set("value")
 
     override def buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean,
-        session: LocalInspectionToolSession): PsiElementVisitor = {
+        ses: LocalInspectionToolSession): PsiElementVisitor = {
         new ScalaElementVisitor {
             override def visitValueDeclaration(v: ScValueDeclaration) =
                 v.declaredElementsArray.foreach(checkShouldAbbreviate)
@@ -70,9 +73,9 @@ class GridScalaAbbreviationInspection extends LocalInspectionTool {
              */
             private def check0(parts: java.util.List[String], elem: PsiElement): Unit = {
                 for (part <- parts) {
-                    if (abbreviationRules.getAbbreviation(part) != null) {
+                    if (!abbrExceptions.contains(part) && abbrRules.getAbbreviation(part) != null) {
                         holder.registerProblem(elem, "Abbreviation should be used",
-                            new RenameToFix(abbreviationRules.replaceWithAbbreviations(parts)))
+                            new RenameToFix(abbrRules.replaceWithAbbreviations(parts)))
 
                         return
                     }
