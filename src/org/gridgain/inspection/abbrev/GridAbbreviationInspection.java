@@ -38,12 +38,12 @@ public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
 
     /** {@inheritDoc} */
     @NotNull @Override public String getDisplayName() {
-        return "Incorrect abbreviation usage";
+        return "Incorrect Java abbreviation usage";
     }
 
     /** {@inheritDoc} */
     @NotNull @Override public String getShortName() {
-        return "AbbreviationUsage";
+        return "JavaAbbreviationUsage";
     }
 
     /** {@inheritDoc} */
