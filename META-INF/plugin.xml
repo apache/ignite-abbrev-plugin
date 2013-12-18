@@ -3,7 +3,7 @@
     <description><![CDATA[Simplifies development with GridGain
         <a href="http://atlassian.gridgain.com/wiki/display/GG/Coding+Guidelines">coding guidelines</a>.]]>
     </description>
-    <version>2.5.9</version>
+    <version>2.5.10</version>
     <vendor>GridGain Inc.</vendor>
     <idea-version since-build="8000"/>
 
@@ -27,9 +27,9 @@
 
         <localInspection
             implementationClass="org.gridgain.inspection.abbrev.GridScalaAbbreviationInspection"
-            displayName="Incorrect abbreviation usage"
+            displayName="Incorrect Scala abbreviation usage"
             groupName="Scala: Code style"
-            shortName="AbbreviationUsage"
+            shortName="ScalaAbbreviationUsage"
             level="WARNING"
             enabledByDefault="true"
             language="Scala"/>
