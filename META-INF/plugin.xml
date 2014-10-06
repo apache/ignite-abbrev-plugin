@@ -39,6 +39,13 @@
                          enabledByDefault="true"
             />
 
+        <localInspection implementationClass="org.gridgain.inspection.GridBracketInspection"
+                         displayName="Illegal '{ }' for one line statement"
+                         language="JAVA"
+                         groupName="GridGain"
+                         enabledByDefault="true"
+            />
+
         <intentionAction>
             <className>org.gridgain.intention.GridGetterSetterGenerator</className>
             <category>Getter Setter</category>
