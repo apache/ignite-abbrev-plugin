@@ -1,0 +1,12 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <localInspection
+            implementationClass="org.gridgain.inspection.abbrev.GridScalaAbbreviationInspection"
+            displayName="Incorrect Scala abbreviation usage"
+            groupName="GridGain"
+            shortName="ScalaAbbreviationUsage"
+            level="WARNING"
+            enabledByDefault="true"
+            language="Scala"/>
+    </extensions>
+</idea-plugin>
