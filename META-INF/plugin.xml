@@ -23,12 +23,26 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <inspectionToolProvider implementation="org.gridgain.inspection.GridInspectionProvider"/>
+        <localInspection implementationClass="org.gridgain.inspection.abbrev.GridAbbreviationInspection"
+                         shortName="JavaAbbreviationUsage"
+                         displayName="Incorrect Java abbreviation usage"
+                         language="JAVA"
+                         groupName="GridGain"
+                         enabledByDefault="true"
+            />
+
+        <localInspection implementationClass="org.gridgain.inspection.comment.GridCommentInspection"
+                         shortName="CommentAbsent"
+                         displayName="Comment is absent"
+                         language="JAVA"
+                         groupName="GridGain"
+                         enabledByDefault="true"
+            />
 
         <localInspection
             implementationClass="org.gridgain.inspection.abbrev.GridScalaAbbreviationInspection"
             displayName="Incorrect Scala abbreviation usage"
-            groupName="Scala: Code style"
+            groupName="GridGain"
             shortName="ScalaAbbreviationUsage"
             level="WARNING"
             enabledByDefault="true"

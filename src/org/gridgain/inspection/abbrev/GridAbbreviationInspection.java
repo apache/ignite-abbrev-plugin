@@ -32,21 +32,6 @@ public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
     private GridAbbreviationRules abbreviationRules = GridAbbreviationRules.getInstance();
 
     /** {@inheritDoc} */
-    @NotNull @Override public String getGroupDisplayName() {
-        return GroupNames.STYLE_GROUP_NAME;
-    }
-
-    /** {@inheritDoc} */
-    @NotNull @Override public String getDisplayName() {
-        return "Incorrect Java abbreviation usage";
-    }
-
-    /** {@inheritDoc} */
-    @NotNull @Override public String getShortName() {
-        return "JavaAbbreviationUsage";
-    }
-
-    /** {@inheritDoc} */
     @NotNull @Override public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder,
         final boolean isOnTheFly) {
         return new JavaElementVisitor() {
