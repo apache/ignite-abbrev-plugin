@@ -9,7 +9,6 @@
 
 package org.gridgain.inspection.comment;
 
-import com.intellij.codeInsight.daemon.*;
 import com.intellij.codeInspection.*;
 import com.intellij.openapi.project.*;
 import com.intellij.psi.*;
@@ -31,21 +30,6 @@ import static org.gridgain.util.GridUtils.*;
 public class GridCommentInspection extends BaseJavaLocalInspectionTool {
     /** Abbreviation rules. */
     private final GridAbbreviationRules abbrevRules = GridAbbreviationRules.getInstance();
-
-    /** {@inheritDoc} */
-    @NotNull @Override public String getGroupDisplayName() {
-        return GroupNames.STYLE_GROUP_NAME;
-    }
-
-    /** {@inheritDoc} */
-    @NotNull @Override public String getDisplayName() {
-        return "Comment is absent";
-    }
-
-    /** {@inheritDoc} */
-    @NotNull @Override public String getShortName() {
-        return "CommentAbsent";
-    }
 
     /** {@inheritDoc} */
     @NotNull @Override public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder,
