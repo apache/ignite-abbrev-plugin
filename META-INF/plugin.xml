@@ -13,7 +13,7 @@
     <project-components>
     </project-components>
 
-    <depends>org.intellij.scala</depends>
+    <depends optional="true" config-file="scala-config.xml">org.intellij.scala</depends>
 
     <actions>
         <action id="gg-gen-getter-setter" class="org.gridgain.action.GridGetterSetterAction"
@@ -38,15 +38,6 @@
                          groupName="GridGain"
                          enabledByDefault="true"
             />
-
-        <localInspection
-            implementationClass="org.gridgain.inspection.abbrev.GridScalaAbbreviationInspection"
-            displayName="Incorrect Scala abbreviation usage"
-            groupName="GridGain"
-            shortName="ScalaAbbreviationUsage"
-            level="WARNING"
-            enabledByDefault="true"
-            language="Scala"/>
 
         <intentionAction>
             <className>org.gridgain.intention.GridGetterSetterGenerator</className>
