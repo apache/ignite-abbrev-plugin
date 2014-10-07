@@ -12,6 +12,9 @@ package org.gridgain.inspection;
 import com.intellij.codeInspection.*;
 import com.intellij.openapi.project.*;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.*;
+import com.intellij.psi.impl.source.tree.java.*;
+import com.intellij.psi.tree.*;
 import org.jetbrains.annotations.*;
 
 /**
@@ -31,13 +34,34 @@ public class GridBracketInspection extends BaseJavaLocalInspectionTool {
 
                 PsiCodeBlock codeBlock = ((PsiBlockStatement)branch).getCodeBlock();
 
-                final PsiStatement[] statements = codeBlock.getStatements();
+                PsiStatement statement = null;
 
-                if (statements.length != 1)
+                for (PsiElement e = codeBlock.getFirstChild(); e != null; e = e.getNextSibling()) {
+                    if (e instanceof PsiWhiteSpace)
+                        continue;
+
+                    if (e instanceof LeafPsiElement) {
+                        IElementType tokenType = ((LeafPsiElement)e).getElementType();
+
+                        if (tokenType == JavaTokenType.LBRACE || tokenType == JavaTokenType.RBRACE)
+                            continue;
+                    }
+
+                    if (e instanceof PsiStatement) {
+                        if (statement != null)
+                            return;
+
+                        statement = (PsiStatement)e;
+                        continue;
+                    }
+
+                    return;
+                }
+
+                if (statement.textContains('\n'))
                     return;
 
-                if (statements[0].textContains('\n'))
-                    return;
+                final PsiStatement finalStatement = statement;
 
                 holder.registerProblem(branch, getDisplayName(), new LocalQuickFix() {
                     @NotNull @Override public String getName() {
@@ -49,7 +73,7 @@ public class GridBracketInspection extends BaseJavaLocalInspectionTool {
                     }
 
                     @Override public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-                        branch.replace(statements[0]);
+                        branch.replace(finalStatement);
                     }
                 });
             }
