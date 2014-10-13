@@ -52,13 +52,14 @@ public class GridBracketInspection extends BaseJavaLocalInspectionTool {
                             return;
 
                         statement = (PsiStatement)e;
+
                         continue;
                     }
 
                     return;
                 }
 
-                if (statement.textContains('\n'))
+                if (statement == null || statement.textContains('\n'))
                     return;
 
                 final PsiStatement finalStatement = statement;
