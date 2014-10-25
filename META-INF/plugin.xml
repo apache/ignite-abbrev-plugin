@@ -53,6 +53,12 @@
                          groupName="GridGain"
                          enabledByDefault="true"/>
 
+        <localInspection implementationClass="org.gridgain.inspection.GridPlublicInterfaceMethodsInspection"
+                         displayName='"public" modifier in interface methods'
+                         language="JAVA"
+                         groupName="GridGain"
+                         enabledByDefault="true"/>
+
         <intentionAction>
             <className>org.gridgain.intention.GridGetterSetterGenerator</className>
             <category>Getter Setter</category>
