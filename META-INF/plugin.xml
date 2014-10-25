@@ -46,6 +46,12 @@
                          enabledByDefault="true"
             />
 
+        <localInspection implementationClass="org.gridgain.inspection.GridAnnotationInspection"
+                         displayName="Annotation formatting"
+                         language="JAVA"
+                         groupName="GridGain"
+                         enabledByDefault="true"/>
+
         <intentionAction>
             <className>org.gridgain.intention.GridGetterSetterGenerator</className>
             <category>Getter Setter</category>
