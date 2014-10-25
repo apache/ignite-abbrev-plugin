@@ -45,6 +45,9 @@ public class GridAnnotationInspection extends BaseJavaLocalInspectionTool {
 
                     if (Nullable.class.getName().equals(name))
                         checkSameLineWithMethodName(ann);
+                    else if (NotNull.class.getName().equals(name)) {
+                        // No-op.
+                    }
                     else if (Override.class.getName().equals(name))
                         checkSameLineWithMethodName(ann);
                     else {
