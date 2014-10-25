@@ -9,11 +9,11 @@
 
 package org.gridgain.inspection;
 
+import com.intellij.codeInsight.*;
 import com.intellij.codeInspection.*;
 import com.intellij.openapi.project.*;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.*;
-import com.intellij.psi.impl.source.tree.java.*;
 import com.intellij.psi.tree.*;
 import org.jetbrains.annotations.*;
 
@@ -74,6 +74,9 @@ public class GridBracketInspection extends BaseJavaLocalInspectionTool {
                     }
 
                     @Override public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+                        if (!FileModificationService.getInstance().preparePsiElementForWrite(branch))
+                            return;
+
                         branch.replace(finalStatement);
                     }
                 });
