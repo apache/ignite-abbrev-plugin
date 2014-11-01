@@ -10,19 +10,20 @@
 package org.gridgain.inspection;
 
 import com.intellij.codeInspection.*;
-import com.intellij.openapi.project.*;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.*;
-import com.intellij.psi.tree.*;
-import com.intellij.psi.util.*;
 import org.jetbrains.annotations.*;
-
-import java.util.*;
 
 /**
  *
  */
 public class GridAnnotationInspection extends BaseJavaLocalInspectionTool {
+
+    /** {@inheritDoc} */
+    @Nls
+    @NotNull @Override public String getDisplayName() {
+        return "Annotation formatting";
+    }
+
     /** {@inheritDoc} */
     @Deprecated
     @NotNull @Override public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

@@ -11,21 +11,24 @@ package org.gridgain.inspection;
 
 import com.intellij.codeInsight.*;
 import com.intellij.codeInspection.*;
-import com.intellij.lang.*;
 import com.intellij.openapi.project.*;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.*;
 import com.intellij.psi.impl.source.codeStyle.*;
 import com.intellij.psi.impl.source.tree.*;
 import com.intellij.psi.tree.*;
-import com.intellij.refactoring.util.*;
-import com.intellij.util.*;
 import org.jetbrains.annotations.*;
 
 /**
  *
  */
 public class GridPlublicInterfaceMethodsInspection extends BaseJavaLocalInspectionTool {
+
+    /** {@inheritDoc} */
+    @Nls
+    @NotNull @Override public String getDisplayName() {
+        return "\"public\" modifier in interface methods";
+    }
+
     /** {@inheritDoc} */
     @Deprecated
     @NotNull @Override public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
