@@ -22,6 +22,13 @@ import org.jetbrains.annotations.*;
  */
 public class GridBracketInspection extends BaseJavaLocalInspectionTool {
 
+    /** {@inheritDoc} */
+    @Nls
+    @NotNull @Override public String getDisplayName() {
+        return "Illegal '{ }' for one line statement";
+    }
+
+    /** {@inheritDoc} */
     @NotNull @Override public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new JavaElementVisitor() {
 

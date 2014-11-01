@@ -32,6 +32,16 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
     private final GridAbbreviationRules abbrevRules = GridAbbreviationRules.getInstance();
 
     /** {@inheritDoc} */
+    @NotNull @Override public String getShortName() {
+        return "CommentAbsent";
+    }
+
+    /** {@inheritDoc} */
+    @NotNull @Override public String getDisplayName() {
+        return "Comment is absent";
+    }
+
+    /** {@inheritDoc} */
     @NotNull @Override public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder,
         final boolean isOnTheFly) {
         return new JavaElementVisitor() {
