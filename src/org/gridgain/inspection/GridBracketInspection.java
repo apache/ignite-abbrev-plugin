@@ -81,6 +81,9 @@ public class GridBracketInspection extends BaseJavaLocalInspectionTool {
                     }
 
                     @Override public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+                        if (!branch.isValid() || !finalStatement.isValid())
+                            return;
+
                         if (!FileModificationService.getInstance().preparePsiElementForWrite(branch))
                             return;
 
