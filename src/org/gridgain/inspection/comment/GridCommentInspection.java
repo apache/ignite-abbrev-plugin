@@ -15,6 +15,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.*;
 import com.intellij.psi.impl.source.tree.java.*;
 import com.intellij.psi.javadoc.*;
+import com.intellij.psi.util.*;
 import org.gridgain.inspection.abbrev.*;
 import org.jetbrains.annotations.*;
 
@@ -218,7 +219,7 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
             @Override public void visitClass(PsiClass cls) {
                 PsiIdentifier nameId = cls.getNameIdentifier();
 
-                if (nameId != null && !(cls instanceof PsiTypeParameterImpl) && !hasComment(cls))
+                if (nameId != null && !(cls instanceof PsiTypeParameterImpl) && !hasComment(cls) && !isAnonymousClass(cls))
                     holder.registerProblem(nameId, getDisplayName());
             }
 
@@ -242,8 +243,13 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
              *         otherwise.
              */
             private boolean isAnonymousClass(PsiClass cls) {
-                return (cls.getNameIdentifier() == null && cls.getNode().getElementType() !=
-                    JavaElementType.ENUM_CONSTANT_INITIALIZER);
+                if (cls.getNameIdentifier() == null && cls.getNode().getElementType() !=
+                    JavaElementType.ENUM_CONSTANT_INITIALIZER)
+                    return true;
+
+                PsiMember parent = PsiTreeUtil.getParentOfType(cls, PsiClass.class, PsiMember.class);
+
+                return parent != null && !(parent instanceof PsiClass); // Classes inside method or field initializer.
             }
 
             /**
