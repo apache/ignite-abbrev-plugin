@@ -101,6 +101,10 @@ public class GridBracketInspection extends BaseJavaLocalInspectionTool {
                 checkStatement(statement.getBody());
             }
 
+            @Override public void visitForeachStatement(PsiForeachStatement statement) {
+                checkStatement(statement.getBody());
+            }
+
             @Override public void visitWhileStatement(PsiWhileStatement statement) {
                 checkStatement(statement.getBody());
             }
