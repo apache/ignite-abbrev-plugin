@@ -210,6 +210,50 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                             }
                         };
                     }
+                    else {
+                        fix = new LocalQuickFix[] {
+                            new LocalQuickFix() {
+                                @NotNull @Override public String getName() {
+                                    return "Add default comment";
+                                }
+
+                                @NotNull @Override public String getFamilyName() {
+                                    return "";
+                                }
+
+                                @Override public void applyFix(@NotNull Project project,
+                                    @NotNull ProblemDescriptor desc) {
+                                    StringBuilder sb = new StringBuilder("/**\n");
+
+                                    PsiParameter[] params = mtd.getParameterList().getParameters();
+
+                                    if (params.length > 0) {
+                                        for (PsiParameter param : params)
+                                            sb.append("* @param ").append(param.getName()).append(' ')
+                                                .append(camelCaseToTextUnwrapAbbrev(param.getName())).append(".\n");
+                                    }
+                                    else
+                                        sb.append("*\n");
+
+//                                    PsiType returnType = mtd.getReturnType();
+//
+//                                    if (!returnType.equalsToText("void")) {
+//                                        sb.append("* @return ")
+//                                            .append(camelCaseToTextUnwrapAbbrev(returnType.getCanonicalText()))
+//                                            .append(".\n");
+//                                    }
+
+                                    sb.append("*/");
+
+                                    PsiElementFactory factory = JavaPsiFacade.getInstance(project).getElementFactory();
+
+                                    mtd.addBefore(
+                                        factory.createDocCommentFromText(sb.toString()),
+                                        mtd.getModifierList());
+                                }
+                            }
+                        };
+                    }
 
                     holder.registerProblem(mtdNameId, getDisplayName(), fix);
                 }
