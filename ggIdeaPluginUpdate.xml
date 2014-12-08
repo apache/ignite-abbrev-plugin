@@ -2,5 +2,5 @@
     <plugin
         id="GridGain plugin"
         url="https://github.com/sevdokimov-gg/gg-abbrev-plugin/releases/download/2.6.1/gg-abbrev-plugin.jar"
-        version="2.6.1" />
+        version="2.6.2" />
 </plugins>
