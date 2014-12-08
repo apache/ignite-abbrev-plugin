@@ -8,14 +8,13 @@
  */
 package org.gridgain.inspection.abbrev;
 
-import com.intellij.codeInsight.daemon.*;
 import com.intellij.codeInspection.*;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.*;
 import com.intellij.psi.*;
 import com.intellij.refactoring.*;
 import org.jetbrains.annotations.*;
 
-import java.io.*;
 import java.util.*;
 
 import static org.gridgain.util.GridUtils.*;
@@ -28,9 +27,6 @@ import static org.gridgain.util.GridUtils.*;
  * @version @java.version
  */
 public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
-    /** Abbreviation rules. */
-    private GridAbbreviationRules abbreviationRules = GridAbbreviationRules.getInstance();
-
     /** {@inheritDoc} */
     @NotNull @Override public String getShortName() {
         return "JavaAbbreviationUsage";
@@ -45,6 +41,8 @@ public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
     /** {@inheritDoc} */
     @NotNull @Override public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder,
         final boolean isOnTheFly) {
+        final GridAbbreviationConfig cfg = ServiceManager.getService(holder.getProject(), GridAbbreviationConfig.class);
+
         return new JavaElementVisitor() {
             /** {@inheritDoc} */
             @Override public void visitField(PsiField field) {
@@ -97,34 +95,15 @@ public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
                 List<String> nameParts = camelCaseParts(toCheck.getName());
 
                 for (String part : nameParts) {
-                    if (getAbbreviation(part) != null) {
+                    if (cfg.getAbbreviation(part) != null) {
                         holder.registerProblem(el, "Abbreviation should be used",
-                            new RenameToFix(abbreviationRules.replaceWithAbbreviations(nameParts)));
+                            new RenameToFix(cfg.replaceWithAbbreviations(nameParts)));
 
                         break;
                     }
                 }
             }
         };
-    }
-
-    /**
-     * Creates panel with user message.
-     *
-     * @return Panel instance.
-     */
-    @Override public javax.swing.JComponent createOptionsPanel() {
-        javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
-        File abbrevFile = abbreviationRules.getFile();
-
-        javax.swing.JLabel msg = new javax.swing.JLabel(
-            abbrevFile != null ? "Using abbreviation file: " + abbrevFile.getAbsolutePath() :
-            "Using default abbreviation file from plugin resources.");
-
-        panel.add(msg);
-
-        return panel;
     }
 
     /**
@@ -174,15 +153,5 @@ public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
 
             renRefactoring.run();
         }
-    }
-
-    /**
-     * Performs lookup of name part in abbreviation table.
-     *
-     * @param namePart Name part to lookup.
-     * @return Abbreviation for given name or {@code null} if there is no such abbreviation.
-     */
-    @Nullable private String getAbbreviation(String namePart) {
-        return abbreviationRules.getAbbreviation(namePart);
     }
 }

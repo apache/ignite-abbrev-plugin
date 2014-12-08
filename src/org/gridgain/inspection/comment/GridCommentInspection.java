@@ -10,6 +10,7 @@
 package org.gridgain.inspection.comment;
 
 import com.intellij.codeInspection.*;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.*;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.*;
@@ -29,9 +30,6 @@ import static org.gridgain.util.GridUtils.*;
  * @version @java.version
  */
 public class GridCommentInspection extends BaseJavaLocalInspectionTool {
-    /** Abbreviation rules. */
-    private final GridAbbreviationRules abbrevRules = GridAbbreviationRules.getInstance();
-
     /** {@inheritDoc} */
     @NotNull @Override public String getShortName() {
         return "CommentAbsent";
@@ -45,6 +43,10 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
     /** {@inheritDoc} */
     @NotNull @Override public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder,
         final boolean isOnTheFly) {
+
+        final GridAbbreviationConfig config = ServiceManager.getService(holder.getProject(),
+            GridAbbreviationConfig.class);
+
         return new JavaElementVisitor() {
             /** {@inheritDoc} */
             @Override public void visitField(final PsiField field) {
@@ -92,7 +94,7 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
 
                                 field.addBefore(
                                     factory.createDocCommentFromText(
-                                        "/** " + camelCaseToTextUnwrapAbbrev(field.getName()) + ". */"),
+                                        "/** " + camelCaseToTextUnwrapAbbrev(config, field.getName()) + ". */"),
                                     field.getModifierList());
                             }
                         });
@@ -143,7 +145,7 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                                     if (params.length > 0) {
                                         for (PsiParameter param : params)
                                             sb.append("* @param ").append(param.getName()).append(' ')
-                                                .append(camelCaseToTextUnwrapAbbrev(param.getName())).append(".\n");
+                                                .append(camelCaseToTextUnwrapAbbrev(config, param.getName())).append(".\n");
                                     }
                                     else
                                         sb.append("* Default constructor")
@@ -230,7 +232,8 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                                     if (params.length > 0) {
                                         for (PsiParameter param : params)
                                             sb.append("* @param ").append(param.getName()).append(' ')
-                                                .append(camelCaseToTextUnwrapAbbrev(param.getName())).append(".\n");
+                                                .append(camelCaseToTextUnwrapAbbrev(config, param.getName()))
+                                                .append(".\n");
                                     }
                                     else
                                         sb.append("*\n");
@@ -316,13 +319,13 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
      * @param camelCase Camel case string.
      * @return Resulting text.
      */
-    private String camelCaseToTextUnwrapAbbrev(String camelCase) {
+    private String camelCaseToTextUnwrapAbbrev(final GridAbbreviationConfig cfg, String camelCase) {
         return transformCamelCase(camelCase, new Closure2<String, Integer, String>() {
             @Override public String apply(String part, Integer idx) {
                 if ("_".equals(part))
                     return "";
 
-                String unw = abbrevRules.getUnwrapping(part);
+                String unw = cfg.getUnwrapping(part);
                 String ret = unw != null ? unw : part;
 
                 return idx == 0 ? capitalizeFirst(ret.toLowerCase()) : " " + ret.toLowerCase();

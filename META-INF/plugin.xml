@@ -15,6 +15,7 @@
     </project-components>
 
     <depends optional="true" config-file="scala-config.xml">org.intellij.scala</depends>
+    <depends>com.intellij.properties</depends>
 
     <actions>
         <action id="gg-gen-getter-setter" class="org.gridgain.action.GridGetterSetterAction"
@@ -89,5 +90,7 @@
             <category>Getter Setter</category>
             <descriptionDirectoryName>GridGetterSetterSubstitutor</descriptionDirectoryName>
         </intentionAction>
+
+        <projectService serviceImplementation="org.gridgain.inspection.abbrev.GridAbbreviationConfig" />
     </extensions>
 </idea-plugin>
