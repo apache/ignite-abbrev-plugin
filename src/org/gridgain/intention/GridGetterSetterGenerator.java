@@ -8,6 +8,7 @@ package org.gridgain.intention;// @java.file.header
  */
 
 import com.intellij.codeInsight.intention.*;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.project.*;
 import com.intellij.psi.*;
@@ -28,9 +29,6 @@ import static org.gridgain.util.GridUtils.*;
  * @version @java.version
  */
 public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction implements IntentionAction {
-    /** Abbreviation rules. */
-    private final GridAbbreviationRules abbrevRules = GridAbbreviationRules.getInstance();
-
     /** Generate getter flag. */
     private final boolean genGetter;
 
@@ -146,7 +144,9 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
 
         String docText = psiDocToText(psiFieldDoc).trim();
 
-        String methodName = methodName(fieldName);
+        GridAbbreviationConfig abbreviationConfig = ServiceManager.getService(project, GridAbbreviationConfig.class);
+
+        String methodName = methodName(abbreviationConfig, fieldName);
 
         String comment = !docText.isEmpty() ? docText : camelCaseToText(methodName).trim() + '.';
 
@@ -179,7 +179,7 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
             if (psiFieldModifiers == null || !psiFieldModifiers.hasExplicitModifier("final")) {
                 PsiMethod psiSetter = psiFactory.createMethod(methodName, PsiType.VOID);
 
-                String paramName = paramName(fieldName);
+                String paramName = paramName(abbreviationConfig, fieldName);
 
                 psiSetter.getParameterList().add(psiFactory.createParameter(paramName, psiField.getType()));
 
@@ -232,13 +232,13 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
      * @param fieldName Field name.
      * @return Method name.
      */
-    private String methodName(String fieldName) {
+    private String methodName(final GridAbbreviationConfig cfg, String fieldName) {
         return transformCamelCase(fieldName, new Closure2<String, Integer, String>() {
             @Override public String apply(String part, Integer idx) {
                 if ("_".equals(part))
                     return "";
 
-                String unw = abbrevRules.getUnwrapping(part);
+                String unw = cfg.getUnwrapping(part);
                 String ret = unw != null ? unw : part;
 
                 return idx > 0 ? capitalizeFirst(ret) : ret.toLowerCase();
@@ -252,13 +252,13 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
      * @param fieldName Field name.
      * @return Parameter name.
      */
-    private String paramName(String fieldName) {
+    private String paramName(final GridAbbreviationConfig cfg, String fieldName) {
         return transformCamelCase(fieldName, new Closure2<String, Integer, String>() {
             @Override public String apply(String part, Integer idx) {
                 if ("_".equals(part))
                     return "";
 
-                String abbr = abbrevRules.getAbbreviation(part);
+                String abbr = cfg.getAbbreviation(part);
                 String ret = abbr != null ? abbr : part;
 
                 return idx > 0 ? capitalizeFirst(ret) : ret.toLowerCase();
