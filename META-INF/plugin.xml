@@ -33,15 +33,6 @@
                          enabledByDefault="true"
             />
 
-        <localInspection
-            implementationClass="org.gridgain.inspection.abbrev.GridScalaAbbreviationInspection"
-            displayName="Incorrect Scala abbreviation usage"
-            groupName="Scala: Code style"
-            shortName="ScalaAbbreviationUsage"
-            level="WARNING"
-            enabledByDefault="true"
-            language="Scala"/>
-
         <localInspection implementationClass="org.gridgain.inspection.comment.GridCommentInspection"
                          shortName="CommentAbsent"
                          displayName="Comment is absent"
