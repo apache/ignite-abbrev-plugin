@@ -10,6 +10,7 @@
 package org.gridgain.inspection.abbrev
 
 import com.intellij.codeInspection._
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.{PsiIdentifier, PsiNamedElement, PsiElement, PsiElementVisitor}
 import org.jetbrains.plugins.scala.lang.psi.api.ScalaElementVisitor
 import org.jetbrains.plugins.scala.lang.psi.api.statements.{ScValue, ScValueDeclaration, ScVariableDefinition}
@@ -27,9 +28,6 @@ import com.intellij.refactoring.{RenameRefactoring, JavaRefactoringFactory}
  * @version @java.version
  */
 class GridScalaAbbreviationInspection extends LocalInspectionTool {
-    /** Abbreviation rules. */
-    val abbrRules = GridAbbreviationRules.getInstance
-
     /** Abbreviation exceptions. */
     val abbrExceptions = Set("value")
 
@@ -73,9 +71,11 @@ class GridScalaAbbreviationInspection extends LocalInspectionTool {
              */
             private def check0(parts: java.util.List[String], elem: PsiElement): Unit = {
                 for (part <- parts) {
-                    if (!abbrExceptions.contains(part) && abbrRules.getAbbreviation(part) != null) {
+                    val config: GridAbbreviationConfig = ServiceManager.getService(elem.getProject, classOf[GridAbbreviationConfig])
+
+                    if (!abbrExceptions.contains(part) && config.getAbbreviation(part) != null) {
                         holder.registerProblem(elem, "Abbreviation should be used",
-                            new RenameToFix(abbrRules.replaceWithAbbreviations(parts)))
+                            new RenameToFix(config.replaceWithAbbreviations(parts)))
 
                         return
                     }
