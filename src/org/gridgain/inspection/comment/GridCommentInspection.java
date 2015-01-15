@@ -138,6 +138,9 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
 
                                 @Override public void applyFix(@NotNull Project project,
                                     @NotNull ProblemDescriptor descriptor) {
+                                    if (!mtd.isValid())
+                                        return;
+
                                     StringBuilder sb = new StringBuilder("/**\n");
 
                                     PsiParameter[] params = mtd.getParameterList().getParameters();
