@@ -41,13 +41,18 @@ public class GridWrongComparationInspection extends BaseJavaLocalInspectionTool 
                 IElementType tokenType = expression.getOperationTokenType();
 
                 if (tokenType == JavaTokenType.EQEQ || tokenType == JavaTokenType.NE) {
-                    PsiType type1 = expression.getLOperand().getType();
-                    PsiType type2 = expression.getROperand().getType();
+                    PsiExpression lOperand = expression.getLOperand();
+                    PsiExpression rOperand = expression.getROperand();
 
-                    if (!type1.equals(PsiType.NULL) && !type2.equals(PsiType.NULL)
-                        && (UNCOMPARABLE_TYPE.contains(type1.getCanonicalText())
-                        || UNCOMPARABLE_TYPE.contains(type2.getCanonicalText())))
-                        holder.registerProblem(expression, getDisplayName());
+                    if (lOperand != null && rOperand != null) {
+                        PsiType type1 = lOperand.getType();
+                        PsiType type2 = rOperand.getType();
+
+                        if (!type1.equals(PsiType.NULL) && !type2.equals(PsiType.NULL)
+                            && (UNCOMPARABLE_TYPE.contains(type1.getCanonicalText())
+                            || UNCOMPARABLE_TYPE.contains(type2.getCanonicalText())))
+                            holder.registerProblem(expression, getDisplayName());
+                    }
                 }
             }
         };
