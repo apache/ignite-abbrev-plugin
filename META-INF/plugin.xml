@@ -67,6 +67,13 @@
                          enabledByDefault="true"
             />
 
+        <localInspection implementationClass="org.gridgain.inspection.GridWrongComparationInspection"
+                         displayName="Illegal comparation, use equals() instead of '=='"
+                         language="JAVA"
+                         groupName="GridGain"
+                         enabledByDefault="true"
+            />
+
         <intentionAction>
             <className>org.gridgain.intention.GridGetterSetterGenerator</className>
             <category>Getter Setter</category>
