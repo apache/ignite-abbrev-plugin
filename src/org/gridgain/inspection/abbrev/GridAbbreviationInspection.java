@@ -92,6 +92,9 @@ public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
              * @param el Element to highlight the problem.
              */
             private void checkShouldAbbreviate(PsiNamedElement toCheck, PsiElement el) {
+                if (!el.isPhysical())
+                    return;
+
                 List<String> nameParts = camelCaseParts(toCheck.getName());
 
                 for (String part : nameParts) {
