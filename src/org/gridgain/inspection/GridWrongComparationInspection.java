@@ -48,7 +48,7 @@ public class GridWrongComparationInspection extends BaseJavaLocalInspectionTool 
                         PsiType type1 = lOperand.getType();
                         PsiType type2 = rOperand.getType();
 
-                        if (!type1.equals(PsiType.NULL) && !type2.equals(PsiType.NULL)
+                        if (type1 != null && type2 != null && !type1.equals(PsiType.NULL) && !type2.equals(PsiType.NULL)
                             && (UNCOMPARABLE_TYPE.contains(type1.getCanonicalText())
                             || UNCOMPARABLE_TYPE.contains(type2.getCanonicalText())))
                             holder.registerProblem(expression, getDisplayName());
