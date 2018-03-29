@@ -7,14 +7,13 @@
  *  \____/   /_/     /_/   \_,__/   \____/   \__,_/  /_/   /_/ /_/
  */
 
-package org.gridgain;
+package org.apache.ignite.idea;
 
 import com.intellij.psi.*;
+import org.apache.ignite.idea.util.GridUtils;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
-
-import static org.gridgain.util.GridUtils.*;
 
 /**
  * Defines the insertion point for new methods.
@@ -39,13 +38,13 @@ public class GridMethodInsertionPointSelector {
      * @return The PSI element, after which to insert new method.
      */
     public @Nullable PsiElement select(PsiClass psiCls, PsiMethod mtd) {
-        PsiMethod highestMethod = min(
+        PsiMethod highestMethod = GridUtils.min(
             COMP,
-            min(COMP, psiCls.findMethodsByName("readExternal", false)),
-            min(COMP, psiCls.findMethodsByName("writeExternal", false)),
-            min(COMP, psiCls.findMethodsByName("hashCode", false)),
-            min(COMP, psiCls.findMethodsByName("equals", false)),
-            min(COMP, psiCls.findMethodsByName("toString", false)));
+            GridUtils.min(COMP, psiCls.findMethodsByName("readExternal", false)),
+            GridUtils.min(COMP, psiCls.findMethodsByName("writeExternal", false)),
+            GridUtils.min(COMP, psiCls.findMethodsByName("hashCode", false)),
+            GridUtils.min(COMP, psiCls.findMethodsByName("equals", false)),
+            GridUtils.min(COMP, psiCls.findMethodsByName("toString", false)));
 
         if (highestMethod != null)
             return highestMethod.getPrevSibling();

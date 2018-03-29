@@ -7,19 +7,19 @@
  *  \____/   /_/     /_/   \_,__/   \____/   \__,_/  /_/   /_/ /_/
  */
 
-package org.gridgain.intention;
+package org.apache.ignite.idea.intention;
 
 /**
- * Intention action for generating GridGain-style setter.
+ * Intention action for generating GridGain-style getter.
  *
  * @author @java.author
  * @version @java.version
  */
-public class GridSetterGenerator extends GridGetterSetterGenerator {
+public class GridGetterGenerator extends GridGetterSetterGenerator {
     /**
      * Default constructor.
      */
-    public GridSetterGenerator() {
-        super(false, true);
+    public GridGetterGenerator() {
+        super(true, false);
     }
 }

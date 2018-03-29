@@ -7,7 +7,7 @@
  *  \____/   /_/     /_/   \_,__/   \____/   \__,_/  /_/   /_/ /_/
  */
 
-package org.gridgain.util;
+package org.apache.ignite.idea.util;
 
 import org.jetbrains.annotations.*;
 

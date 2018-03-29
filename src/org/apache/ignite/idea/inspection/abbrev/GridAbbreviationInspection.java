@@ -6,7 +6,7 @@
  *  / /_/ /  _  /    _  /  / /_/ /  / /_/ /  / /_/ / _  /  _  / / /
  *  \____/   /_/     /_/   \_,__/   \____/   \__,_/  /_/   /_/ /_/
  */
-package org.gridgain.inspection.abbrev;
+package org.apache.ignite.idea.inspection.abbrev;
 
 import com.intellij.codeInspection.*;
 import com.intellij.openapi.components.*;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.*;
 
 import java.util.*;
 
-import static org.gridgain.util.GridUtils.*;
+import static org.apache.ignite.idea.util.GridUtils.*;
 
 /**
  * Inspection that checks variable names for usage of restricted words that

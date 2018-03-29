@@ -7,7 +7,7 @@
  *  \____/   /_/     /_/   \_,__/   \____/   \__,_/  /_/   /_/ /_/
  */
 
-package org.gridgain.inspection.abbrev;
+package org.apache.ignite.idea.inspection.abbrev;
 
 import com.intellij.lang.properties.psi.*;
 import com.intellij.lang.properties.psi.impl.*;

@@ -7,20 +7,32 @@
  *  \____/   /_/     /_/   \_,__/   \____/   \__,_/  /_/   /_/ /_/
  */
 
-package org.gridgain.inspection.comment;
+package org.apache.ignite.idea.inspection.comment;
 
-import com.intellij.codeInspection.*;
-import com.intellij.openapi.components.*;
-import com.intellij.openapi.project.*;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.*;
-import com.intellij.psi.impl.source.tree.java.*;
-import com.intellij.psi.javadoc.*;
-import com.intellij.psi.util.*;
-import org.gridgain.inspection.abbrev.*;
-import org.jetbrains.annotations.*;
-
-import static org.gridgain.util.GridUtils.*;
+import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.JavaElementVisitor;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiDocCommentOwner;
+import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiIdentifier;
+import com.intellij.psi.PsiMember;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
+import com.intellij.psi.impl.source.tree.JavaElementType;
+import com.intellij.psi.impl.source.tree.java.PsiTypeParameterImpl;
+import com.intellij.psi.javadoc.PsiDocComment;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.apache.ignite.idea.inspection.abbrev.GridAbbreviationConfig;
+import org.apache.ignite.idea.util.GridUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Inspection that searches for uncommented fields, methods,
@@ -323,7 +335,7 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
      * @return Resulting text.
      */
     private String camelCaseToTextUnwrapAbbrev(final GridAbbreviationConfig cfg, String camelCase) {
-        return transformCamelCase(camelCase, new Closure2<String, Integer, String>() {
+        return GridUtils.transformCamelCase(camelCase, new GridUtils.Closure2<String, Integer, String>() {
             @Override public String apply(String part, Integer idx) {
                 if ("_".equals(part))
                     return "";
@@ -331,7 +343,7 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                 String unw = cfg.getUnwrapping(part);
                 String ret = unw != null ? unw : part;
 
-                return idx == 0 ? capitalizeFirst(ret.toLowerCase()) : " " + ret.toLowerCase();
+                return idx == 0 ? GridUtils.capitalizeFirst(ret.toLowerCase()) : " " + ret.toLowerCase();
             }
         });
     }

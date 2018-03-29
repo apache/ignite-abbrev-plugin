@@ -1,4 +1,4 @@
-package org.gridgain.intention;// @java.file.header
+package org.apache.ignite.idea.intention;// @java.file.header
 
 /*  _________        _____ __________________        _____
  *  __  ____/___________(_)______  /__  ____/______ ____(_)_______
@@ -7,20 +7,36 @@ package org.gridgain.intention;// @java.file.header
  *  \____/   /_/     /_/   \_,__/   \____/   \__,_/  /_/   /_/ /_/
  */
 
-import com.intellij.codeInsight.intention.*;
-import com.intellij.openapi.components.*;
-import com.intellij.openapi.editor.*;
-import com.intellij.openapi.project.*;
-import com.intellij.psi.*;
-import com.intellij.psi.codeStyle.*;
-import com.intellij.psi.javadoc.*;
-import com.intellij.psi.util.*;
-import com.intellij.util.*;
-import org.gridgain.*;
-import org.gridgain.inspection.abbrev.*;
-import org.jetbrains.annotations.*;
+import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.JavaTokenType;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiCodeBlock;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiJavaToken;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifierList;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.javadoc.PsiDocComment;
+import com.intellij.psi.javadoc.PsiDocToken;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.IncorrectOperationException;
+import org.apache.ignite.idea.GridMethodInsertionPointSelector;
+import org.apache.ignite.idea.inspection.abbrev.GridAbbreviationConfig;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import static org.gridgain.util.GridUtils.*;
+import static org.apache.ignite.idea.util.GridUtils.Closure2;
+import static org.apache.ignite.idea.util.GridUtils.capitalizeFirst;
+import static org.apache.ignite.idea.util.GridUtils.transformCamelCase;
+import static org.apache.ignite.idea.util.GridUtils.unCapitalizeFirst;
 
 /**
  * Intention action for generating GridGain-style getter and setter.
