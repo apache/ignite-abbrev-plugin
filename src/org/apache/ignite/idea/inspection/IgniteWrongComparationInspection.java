@@ -27,7 +27,7 @@ import java.util.*;
 /**
  *
  */
-public class GridWrongComparationInspection extends BaseJavaLocalInspectionTool {
+public class IgniteWrongComparationInspection extends BaseJavaLocalInspectionTool {
     /** */
     private static final Set<String> UNCOMPARABLE_TYPE = new HashSet<String>(Arrays.asList(
         "org.apache.ignite.internal.processors.affinity.AffinityTopologyVersion"

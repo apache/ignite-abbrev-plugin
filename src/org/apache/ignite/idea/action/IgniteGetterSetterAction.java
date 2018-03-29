@@ -35,12 +35,12 @@ import com.intellij.psi.util.PsiTreeUtil;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.ignite.idea.intention.GridGetterSetterGenerator;
+import org.apache.ignite.idea.intention.IgniteGetterSetterGenerator;
 
 /**
  * Action for generating Apache Ignite style getters and setters.
  */
-public class GridGetterSetterAction extends AnAction {
+public class IgniteGetterSetterAction extends AnAction {
     /** {@inheritDoc} */
     public void actionPerformed(AnActionEvent e) {
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
@@ -56,7 +56,7 @@ public class GridGetterSetterAction extends AnAction {
         if (psiCls == null)
             return;
 
-        final GridGetterSetterGenerator gen = new GridGetterSetterGenerator();
+        final IgniteGetterSetterGenerator gen = new IgniteGetterSetterGenerator();
 
         Collection<PsiFieldMember> mFields = new LinkedList<PsiFieldMember>();
 

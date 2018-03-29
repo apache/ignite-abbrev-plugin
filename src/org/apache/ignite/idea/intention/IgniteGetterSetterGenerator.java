@@ -38,20 +38,20 @@ import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocToken;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import org.apache.ignite.idea.GridMethodInsertionPointSelector;
-import org.apache.ignite.idea.inspection.abbrev.GridAbbreviationConfig;
+import org.apache.ignite.idea.IgniteMethodInsertionPointSelector;
+import org.apache.ignite.idea.inspection.abbrev.IgniteAbbreviationConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.apache.ignite.idea.util.GridUtils.Closure2;
-import static org.apache.ignite.idea.util.GridUtils.capitalizeFirst;
-import static org.apache.ignite.idea.util.GridUtils.transformCamelCase;
-import static org.apache.ignite.idea.util.GridUtils.unCapitalizeFirst;
+import static org.apache.ignite.idea.util.IgniteUtils.Closure2;
+import static org.apache.ignite.idea.util.IgniteUtils.capitalizeFirst;
+import static org.apache.ignite.idea.util.IgniteUtils.transformCamelCase;
+import static org.apache.ignite.idea.util.IgniteUtils.unCapitalizeFirst;
 
 /**
  * Intention action for generating Apache Ignite style getter and setter.
  */
-public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction implements IntentionAction {
+public class IgniteGetterSetterGenerator extends PsiElementBaseIntentionAction implements IntentionAction {
     /** Generate getter flag. */
     private final boolean genGetter;
 
@@ -59,12 +59,12 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
     private final boolean genSetter;
 
     /** Insertion point selector. */
-    private final GridMethodInsertionPointSelector insPtSel = new GridMethodInsertionPointSelector();
+    private final IgniteMethodInsertionPointSelector insPtSel = new IgniteMethodInsertionPointSelector();
 
     /**
      * Default constructor.
      */
-    public GridGetterSetterGenerator() {
+    public IgniteGetterSetterGenerator() {
         this(true, true);
     }
 
@@ -72,7 +72,7 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
      * @param genGetter Generate getter?
      * @param genSetter Generate setter?
      */
-    public GridGetterSetterGenerator(boolean genGetter, boolean genSetter) {
+    public IgniteGetterSetterGenerator(boolean genGetter, boolean genSetter) {
         this.genGetter = genGetter;
         this.genSetter = genSetter;
 
@@ -167,7 +167,7 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
 
         String docText = psiDocToText(psiFieldDoc).trim();
 
-        GridAbbreviationConfig abbreviationConfig = ServiceManager.getService(project, GridAbbreviationConfig.class);
+        IgniteAbbreviationConfig abbreviationConfig = ServiceManager.getService(project, IgniteAbbreviationConfig.class);
 
         String methodName = methodName(abbreviationConfig, fieldName);
 
@@ -255,7 +255,7 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
      * @param fieldName Field name.
      * @return Method name.
      */
-    private String methodName(final GridAbbreviationConfig cfg, String fieldName) {
+    private String methodName(final IgniteAbbreviationConfig cfg, String fieldName) {
         return transformCamelCase(fieldName, new Closure2<String, Integer, String>() {
             @Override public String apply(String part, Integer idx) {
                 if ("_".equals(part))
@@ -275,7 +275,7 @@ public class GridGetterSetterGenerator extends PsiElementBaseIntentionAction imp
      * @param fieldName Field name.
      * @return Parameter name.
      */
-    private String paramName(final GridAbbreviationConfig cfg, String fieldName) {
+    private String paramName(final IgniteAbbreviationConfig cfg, String fieldName) {
         return transformCamelCase(fieldName, new Closure2<String, Integer, String>() {
             @Override public String apply(String part, Integer idx) {
                 if ("_".equals(part))

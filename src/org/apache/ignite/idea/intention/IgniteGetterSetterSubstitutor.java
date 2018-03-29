@@ -29,13 +29,13 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.JavaRefactoringFactory;
 import com.intellij.util.IncorrectOperationException;
-import org.apache.ignite.idea.util.GridUtils;
+import org.apache.ignite.idea.util.IgniteUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Tries to bring all getters and setters to Apache Ignite style.
  */
-public class GridGetterSetterSubstitutor  extends PsiElementBaseIntentionAction implements IntentionAction {
+public class IgniteGetterSetterSubstitutor extends PsiElementBaseIntentionAction implements IntentionAction {
     /** {@inheritDoc} */
     @NotNull public String getText() {
         return "Ignitify getters and setters";
@@ -84,7 +84,7 @@ public class GridGetterSetterSubstitutor  extends PsiElementBaseIntentionAction 
             if (methodNameMatches(methodName)) {
                 rFactory.createRename(
                     psiMethod,
-                    GridUtils.unCapitalizeFirst(methodName.substring(3)),
+                    IgniteUtils.unCapitalizeFirst(methodName.substring(3)),
                     false,
                     false)
                 .run();

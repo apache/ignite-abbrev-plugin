@@ -20,7 +20,7 @@
 <idea-plugin>
     <extensions defaultExtensionNs="com.intellij">
         <localInspection
-            implementationClass="org.apache.ignite.idea.inspection.abbrev.GridAbbreviationInspection"
+            implementationClass="org.apache.ignite.idea.inspection.abbrev.IgniteAbbreviationInspection"
             displayName="Incorrect Scala abbreviation usage"
             groupName="Apache Ignite"
             shortName="ScalaAbbreviationUsage"

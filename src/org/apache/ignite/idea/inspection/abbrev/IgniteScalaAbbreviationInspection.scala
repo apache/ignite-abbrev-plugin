@@ -25,14 +25,14 @@ import org.jetbrains.plugins.scala.lang.psi.api.statements.{ScValue, ScValueDecl
 import org.jetbrains.plugins.scala.lang.psi.api.statements.params.ScParameter
 
 import scala.collection.JavaConversions._
-import GridUtils
+import IgniteUtils
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.{RenameRefactoring, JavaRefactoringFactory}
 
 /**
  * Abbreviation inspection for Scala language.
  */
-class GridScalaAbbreviationInspection extends LocalInspectionTool {
+class IgniteScalaAbbreviationInspection extends LocalInspectionTool {
     /** Abbreviation exceptions. */
     val abbrExceptions = Set("value")
 
@@ -57,7 +57,7 @@ class GridScalaAbbreviationInspection extends LocalInspectionTool {
              * @param elem Element to check and rename.
              */
             private def checkShouldAbbreviate(elem: PsiNamedElement) =
-                check0(GridUtils.camelCaseParts(elem.getName), elem)
+                check0(IgniteUtils.camelCaseParts(elem.getName), elem)
 
             /**
              * Checks if given name contains a part that should be abbreviated and registers fix if needed.
@@ -65,7 +65,7 @@ class GridScalaAbbreviationInspection extends LocalInspectionTool {
              * @param elem Element to check and rename.
              */
             private def checkShouldAbbreviate(elem: PsiElement, id: PsiIdentifier) =
-                check0(GridUtils.camelCaseParts(id.getText), elem)
+                check0(IgniteUtils.camelCaseParts(id.getText), elem)
 
             /**
              * Checks that all identifier parts are correctly abbreviated. Registers problem if
@@ -76,7 +76,7 @@ class GridScalaAbbreviationInspection extends LocalInspectionTool {
              */
             private def check0(parts: java.util.List[String], elem: PsiElement): Unit = {
                 for (part <- parts) {
-                    val config: GridAbbreviationConfig = ServiceManager.getService(elem.getProject, classOf[GridAbbreviationConfig])
+                    val config: IgniteAbbreviationConfig = ServiceManager.getService(elem.getProject, classOf[IgniteAbbreviationConfig])
 
                     if (!abbrExceptions.contains(part) && config.getAbbreviation(part) != null) {
                         holder.registerProblem(elem, "Abbreviation should be used",

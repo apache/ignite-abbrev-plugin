@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * Various utility methods.
  */
-public abstract class GridUtils {
+public abstract class IgniteUtils {
     /**
      * Input-output closure with 2 input parameters.
      */

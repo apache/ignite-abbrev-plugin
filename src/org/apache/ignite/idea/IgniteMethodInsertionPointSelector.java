@@ -18,7 +18,7 @@
 package org.apache.ignite.idea;
 
 import com.intellij.psi.*;
-import org.apache.ignite.idea.util.GridUtils;
+import org.apache.ignite.idea.util.IgniteUtils;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import java.util.*;
 /**
  * Defines the insertion point for new methods.
  */
-public class GridMethodInsertionPointSelector {
+public class IgniteMethodInsertionPointSelector {
     /** Method position comparator. */
     private final Comparator<PsiMethod> COMP = new Comparator<PsiMethod>() {
         @Override public int compare(PsiMethod o1, PsiMethod o2) {
@@ -43,13 +43,13 @@ public class GridMethodInsertionPointSelector {
      * @return The PSI element, after which to insert new method.
      */
     public @Nullable PsiElement select(PsiClass psiCls, PsiMethod mtd) {
-        PsiMethod highestMethod = GridUtils.min(
+        PsiMethod highestMethod = IgniteUtils.min(
             COMP,
-            GridUtils.min(COMP, psiCls.findMethodsByName("readExternal", false)),
-            GridUtils.min(COMP, psiCls.findMethodsByName("writeExternal", false)),
-            GridUtils.min(COMP, psiCls.findMethodsByName("hashCode", false)),
-            GridUtils.min(COMP, psiCls.findMethodsByName("equals", false)),
-            GridUtils.min(COMP, psiCls.findMethodsByName("toString", false)));
+            IgniteUtils.min(COMP, psiCls.findMethodsByName("readExternal", false)),
+            IgniteUtils.min(COMP, psiCls.findMethodsByName("writeExternal", false)),
+            IgniteUtils.min(COMP, psiCls.findMethodsByName("hashCode", false)),
+            IgniteUtils.min(COMP, psiCls.findMethodsByName("equals", false)),
+            IgniteUtils.min(COMP, psiCls.findMethodsByName("toString", false)));
 
         if (highestMethod != null)
             return highestMethod.getPrevSibling();

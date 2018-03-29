@@ -20,11 +20,11 @@ package org.apache.ignite.idea.intention;
 /**
  * Intention action for generating Apache Ignite-style getter.
  */
-public class GridGetterGenerator extends GridGetterSetterGenerator {
+public class IgniteGetterGenerator extends IgniteGetterSetterGenerator {
     /**
      * Default constructor.
      */
-    public GridGetterGenerator() {
+    public IgniteGetterGenerator() {
         super(true, false);
     }
 }

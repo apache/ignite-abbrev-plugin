@@ -27,7 +27,7 @@ import org.jetbrains.annotations.*;
 /**
  *
  */
-public class GridEmptyLineInspection extends BaseJavaLocalInspectionTool {
+public class IgniteEmptyLineInspection extends BaseJavaLocalInspectionTool {
     /** {@inheritDoc} */
     @Nls @NotNull @Override public String getDisplayName() {
         return "Illegal empty line before first class element";

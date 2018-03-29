@@ -26,13 +26,13 @@ import org.jetbrains.annotations.*;
 
 import java.util.*;
 
-import static org.apache.ignite.idea.util.GridUtils.*;
+import static org.apache.ignite.idea.util.IgniteUtils.*;
 
 /**
  * Inspection that checks variable names for usage of restricted words that
  * need to be abbreviated.
  */
-public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
+public class IgniteAbbreviationInspection extends BaseJavaLocalInspectionTool {
     /** {@inheritDoc} */
     @NotNull @Override public String getShortName() {
         return "JavaAbbreviationUsage";
@@ -47,7 +47,7 @@ public class GridAbbreviationInspection extends BaseJavaLocalInspectionTool {
     /** {@inheritDoc} */
     @NotNull @Override public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder,
         final boolean isOnTheFly) {
-        final GridAbbreviationConfig cfg = ServiceManager.getService(holder.getProject(), GridAbbreviationConfig.class);
+        final IgniteAbbreviationConfig cfg = ServiceManager.getService(holder.getProject(), IgniteAbbreviationConfig.class);
 
         return new JavaElementVisitor() {
             /** {@inheritDoc} */
