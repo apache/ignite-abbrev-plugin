@@ -37,7 +37,7 @@
     <depends>com.intellij.properties</depends>
 
     <actions>
-        <action id="gg-gen-getter-setter" class="org.apache.ignite.idea.action.GridGetterSetterAction"
+        <action id="ignite-gen-getter-setter" class="org.apache.ignite.idea.action.GridGetterSetterAction"
                 text="Apache Ignite style getters and setters">
             <add-to-group group-id="GenerateGroup"/>
         </action>
