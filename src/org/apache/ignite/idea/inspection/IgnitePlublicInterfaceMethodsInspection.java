@@ -29,7 +29,7 @@ import org.jetbrains.annotations.*;
 /**
  *
  */
-public class GridPlublicInterfaceMethodsInspection extends BaseJavaLocalInspectionTool {
+public class IgnitePlublicInterfaceMethodsInspection extends BaseJavaLocalInspectionTool {
 
     /** {@inheritDoc} */
     @Nls

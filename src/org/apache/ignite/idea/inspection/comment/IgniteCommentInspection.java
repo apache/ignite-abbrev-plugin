@@ -38,15 +38,15 @@ import com.intellij.psi.impl.source.tree.JavaElementType;
 import com.intellij.psi.impl.source.tree.java.PsiTypeParameterImpl;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.apache.ignite.idea.inspection.abbrev.GridAbbreviationConfig;
-import org.apache.ignite.idea.util.GridUtils;
+import org.apache.ignite.idea.inspection.abbrev.IgniteAbbreviationConfig;
+import org.apache.ignite.idea.util.IgniteUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Inspection that searches for uncommented fields, methods,
  * and classes, and displays warnings for them.
  */
-public class GridCommentInspection extends BaseJavaLocalInspectionTool {
+public class IgniteCommentInspection extends BaseJavaLocalInspectionTool {
     /** {@inheritDoc} */
     @NotNull @Override public String getShortName() {
         return "CommentAbsent";
@@ -61,8 +61,8 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
     @NotNull @Override public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder,
         final boolean isOnTheFly) {
 
-        final GridAbbreviationConfig config = ServiceManager.getService(holder.getProject(),
-            GridAbbreviationConfig.class);
+        final IgniteAbbreviationConfig config = ServiceManager.getService(holder.getProject(),
+            IgniteAbbreviationConfig.class);
 
         return new JavaElementVisitor() {
             /** {@inheritDoc} */
@@ -339,8 +339,8 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
      * @param camelCase Camel case string.
      * @return Resulting text.
      */
-    private String camelCaseToTextUnwrapAbbrev(final GridAbbreviationConfig cfg, String camelCase) {
-        return GridUtils.transformCamelCase(camelCase, new GridUtils.Closure2<String, Integer, String>() {
+    private String camelCaseToTextUnwrapAbbrev(final IgniteAbbreviationConfig cfg, String camelCase) {
+        return IgniteUtils.transformCamelCase(camelCase, new IgniteUtils.Closure2<String, Integer, String>() {
             @Override public String apply(String part, Integer idx) {
                 if ("_".equals(part))
                     return "";
@@ -348,7 +348,7 @@ public class GridCommentInspection extends BaseJavaLocalInspectionTool {
                 String unw = cfg.getUnwrapping(part);
                 String ret = unw != null ? unw : part;
 
-                return idx == 0 ? GridUtils.capitalizeFirst(ret.toLowerCase()) : " " + ret.toLowerCase();
+                return idx == 0 ? IgniteUtils.capitalizeFirst(ret.toLowerCase()) : " " + ret.toLowerCase();
             }
         });
     }

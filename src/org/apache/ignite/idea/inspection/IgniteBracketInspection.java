@@ -28,7 +28,7 @@ import org.jetbrains.annotations.*;
 /**
  *
  */
-public class GridBracketInspection extends BaseJavaLocalInspectionTool {
+public class IgniteBracketInspection extends BaseJavaLocalInspectionTool {
 
     /** {@inheritDoc} */
     @Nls

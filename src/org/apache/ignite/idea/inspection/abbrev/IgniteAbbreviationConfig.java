@@ -41,9 +41,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  *
  */
-public class GridAbbreviationConfig {
+public class IgniteAbbreviationConfig {
 
-    private static final Key<Pair<Config, Long>> KEY = Key.create("GridAbbreviationConfig.KEY");
+    private static final Key<Pair<Config, Long>> KEY = Key.create("IgniteAbbreviationConfig.KEY");
 
     private final Project project;
 
@@ -53,7 +53,7 @@ public class GridAbbreviationConfig {
 
     private long lastVfsModification;
 
-    public GridAbbreviationConfig(Project project) {
+    public IgniteAbbreviationConfig(Project project) {
         this.project = project;
 
         try {
