@@ -17,7 +17,7 @@ import org.jetbrains.plugins.scala.lang.psi.api.statements.{ScValue, ScValueDecl
 import org.jetbrains.plugins.scala.lang.psi.api.statements.params.ScParameter
 
 import scala.collection.JavaConversions._
-import org.gridgain.util.GridUtils
+import GridUtils
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.{RenameRefactoring, JavaRefactoringFactory}
 

@@ -7,17 +7,22 @@
  *  \____/   /_/     /_/   \_,__/   \____/   \__,_/  /_/   /_/ /_/
  */
 
-package org.gridgain.intention;
+package org.apache.ignite.idea.intention;
 
-import com.intellij.codeInsight.intention.*;
-import com.intellij.openapi.editor.*;
-import com.intellij.openapi.project.*;
-import com.intellij.psi.*;
-import com.intellij.psi.util.*;
-import com.intellij.refactoring.*;
-import com.intellij.util.*;
-import org.gridgain.util.*;
-import org.jetbrains.annotations.*;
+import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.JavaTokenType;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiJavaToken;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.refactoring.JavaRefactoringFactory;
+import com.intellij.util.IncorrectOperationException;
+import org.apache.ignite.idea.util.GridUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Tries to bring all getters and setters to GridGain style.

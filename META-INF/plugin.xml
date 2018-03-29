@@ -1,10 +1,10 @@
 <idea-plugin version="2">
-    <name>GridGain plugin</name>
-    <description><![CDATA[Simplifies development with GridGain
-        <a href="http://atlassian.gridgain.com/wiki/display/GG/Coding+Guidelines">coding guidelines</a>.]]>
+    <name>Apache Ignite abbreviation plugin</name>
+    <description><![CDATA[Simplifies development with Apache Ignite
+        <a href="https://cwiki.apache.org/confluence/display/IGNITE/Coding+Guidelines">coding guidelines</a>.]]>
     </description>
     <version>2.6.3</version>
-    <vendor>GridGain Inc.</vendor>
+    <vendor>Apache Ignite</vendor>
 
     <idea-version since-build="135.1"/>
 
@@ -18,86 +18,86 @@
     <depends>com.intellij.properties</depends>
 
     <actions>
-        <action id="gg-gen-getter-setter" class="org.gridgain.action.GridGetterSetterAction"
+        <action id="gg-gen-getter-setter" class="org.apache.ignite.idea.action.GridGetterSetterAction"
                 text="GridGain style getters and setters">
             <add-to-group group-id="GenerateGroup"/>
         </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <localInspection implementationClass="org.gridgain.inspection.abbrev.GridAbbreviationInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.abbrev.GridAbbreviationInspection"
                          shortName="JavaAbbreviationUsage"
                          displayName="Incorrect Java abbreviation usage"
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"
             />
 
-        <localInspection implementationClass="org.gridgain.inspection.comment.GridCommentInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.comment.GridCommentInspection"
                          shortName="CommentAbsent"
                          displayName="Comment is absent"
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"
             />
 
-        <localInspection implementationClass="org.gridgain.inspection.GridBracketInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.GridBracketInspection"
                          displayName="Illegal '{ }' for one line statement"
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"
             />
 
-        <localInspection implementationClass="org.gridgain.inspection.GridAnnotationInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.GridAnnotationInspection"
                          displayName="Annotation formatting"
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"/>
 
-        <localInspection implementationClass="org.gridgain.inspection.GridPlublicInterfaceMethodsInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.GridPlublicInterfaceMethodsInspection"
                          displayName='"public" modifier in interface methods'
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"/>
 
-        <localInspection implementationClass="org.gridgain.inspection.GridEmptyLineInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.GridEmptyLineInspection"
                          displayName="Illegal empty line before first class element"
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"
             />
 
-        <localInspection implementationClass="org.gridgain.inspection.GridWrongComparationInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.GridWrongComparationInspection"
                          displayName="Illegal comparation, use equals() instead of '=='"
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"
             />
 
         <intentionAction>
-            <className>org.gridgain.intention.GridGetterSetterGenerator</className>
+            <className>org.apache.ignite.idea.intention.GridGetterSetterGenerator</className>
             <category>Getter Setter</category>
             <descriptionDirectoryName>GridGetterSetterGenerator</descriptionDirectoryName>
         </intentionAction>
 
         <intentionAction>
-            <className>org.gridgain.intention.GridGetterGenerator</className>
+            <className>org.apache.ignite.idea.intention.GridGetterGenerator</className>
             <category>Getter Setter</category>
             <descriptionDirectoryName>GridGetterGenerator</descriptionDirectoryName>
         </intentionAction>
 
         <intentionAction>
-            <className>org.gridgain.intention.GridSetterGenerator</className>
+            <className>org.apache.ignite.idea.intention.GridSetterGenerator</className>
             <category>Getter Setter</category>
             <descriptionDirectoryName>GridSetterGenerator</descriptionDirectoryName>
         </intentionAction>
 
         <intentionAction>
-            <className>org.gridgain.intention.GridGetterSetterSubstitutor</className>
+            <className>org.apache.ignite.idea.intention.GridGetterSetterSubstitutor</className>
             <category>Getter Setter</category>
             <descriptionDirectoryName>GridGetterSetterSubstitutor</descriptionDirectoryName>
         </intentionAction>
 
-        <projectService serviceImplementation="org.gridgain.inspection.abbrev.GridAbbreviationConfig" />
+        <projectService serviceImplementation="org.apache.ignite.idea.inspection.abbrev.GridAbbreviationConfig" />
     </extensions>
 </idea-plugin>

@@ -7,21 +7,27 @@
  *  \____/   /_/     /_/   \_,__/   \____/   \__,_/  /_/   /_/ /_/
  */
 
-package org.gridgain.action;
+package org.apache.ignite.idea.action;
 
-import com.intellij.codeInsight.generation.*;
-import com.intellij.ide.util.*;
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.application.*;
-import com.intellij.openapi.command.*;
-import com.intellij.openapi.editor.*;
-import com.intellij.openapi.project.*;
-import com.intellij.psi.*;
-import com.intellij.psi.codeStyle.*;
-import com.intellij.psi.util.*;
-import org.gridgain.intention.*;
-
-import java.util.*;
+import com.intellij.codeInsight.generation.PsiFieldMember;
+import com.intellij.ide.util.MemberChooser;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.util.PsiTreeUtil;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import org.apache.ignite.idea.intention.GridGetterSetterGenerator;
 
 /**
  * Action for generating GridGain-style getters and setters.
