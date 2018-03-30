@@ -19,15 +19,15 @@ package org.apache.ignite.idea.inspection.abbrev
 
 import com.intellij.codeInspection._
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.psi.{PsiIdentifier, PsiNamedElement, PsiElement, PsiElementVisitor}
+import com.intellij.psi.{PsiElement, PsiElementVisitor, PsiIdentifier, PsiNamedElement}
 import org.jetbrains.plugins.scala.lang.psi.api.ScalaElementVisitor
 import org.jetbrains.plugins.scala.lang.psi.api.statements.{ScValue, ScValueDeclaration, ScVariableDefinition}
 import org.jetbrains.plugins.scala.lang.psi.api.statements.params.ScParameter
 
 import scala.collection.JavaConversions._
-import IgniteUtils
 import com.intellij.openapi.project.Project
-import com.intellij.refactoring.{RenameRefactoring, JavaRefactoringFactory}
+import com.intellij.refactoring.{JavaRefactoringFactory, RenameRefactoring}
+import org.apache.ignite.idea.util.IgniteUtils
 
 /**
  * Abbreviation inspection for Scala language.
