@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -15,9 +17,9 @@
   limitations under the License.
 -->
 
-<html>
-<body>
-<span style="font-family: verdana,serif;">Highlights variables and fields with names where
-abbreviations should be used instead of full words (e.g. <b>cnt</b> should be used instead of <b>count</b>).</span>
-</body>
-</html>
+<plugins>
+    <plugin
+        id="Apache Ignite abbreviation plugin"
+        url="https://github.com/dspavlov/ignite-abbrev-plugin/releases/download/3.0.0/ignite-abbrev-plugin.jar"
+        version="3.0.0" />
+</plugins>

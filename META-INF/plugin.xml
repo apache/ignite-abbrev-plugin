@@ -1,10 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
 <idea-plugin version="2">
-    <name>GridGain plugin</name>
-    <description><![CDATA[Simplifies development with GridGain
-        <a href="http://atlassian.gridgain.com/wiki/display/GG/Coding+Guidelines">coding guidelines</a>.]]>
+    <name>Apache Ignite abbreviation plugin</name>
+    <description><![CDATA[Simplifies development with Apache Ignite
+        <a href="https://cwiki.apache.org/confluence/display/IGNITE/Coding+Guidelines">coding guidelines</a>.]]>
     </description>
-    <version>2.6.3</version>
-    <vendor>GridGain Inc.</vendor>
+    <version>3.0.0</version>
+    <vendor>Apache Ignite</vendor>
 
     <idea-version since-build="135.1"/>
 
@@ -18,86 +37,86 @@
     <depends>com.intellij.properties</depends>
 
     <actions>
-        <action id="gg-gen-getter-setter" class="org.gridgain.action.GridGetterSetterAction"
-                text="GridGain style getters and setters">
+        <action id="ignite-gen-getter-setter" class="org.apache.ignite.idea.action.IgniteGetterSetterAction"
+                text="Apache Ignite style getters and setters">
             <add-to-group group-id="GenerateGroup"/>
         </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <localInspection implementationClass="org.gridgain.inspection.abbrev.GridAbbreviationInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.abbrev.IgniteAbbreviationInspection"
                          shortName="JavaAbbreviationUsage"
                          displayName="Incorrect Java abbreviation usage"
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"
             />
 
-        <localInspection implementationClass="org.gridgain.inspection.comment.GridCommentInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.comment.IgniteCommentInspection"
                          shortName="CommentAbsent"
                          displayName="Comment is absent"
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"
             />
 
-        <localInspection implementationClass="org.gridgain.inspection.GridBracketInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.IgniteBracketInspection"
                          displayName="Illegal '{ }' for one line statement"
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"
             />
 
-        <localInspection implementationClass="org.gridgain.inspection.GridAnnotationInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.IgniteAnnotationInspection"
                          displayName="Annotation formatting"
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"/>
 
-        <localInspection implementationClass="org.gridgain.inspection.GridPlublicInterfaceMethodsInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.IgnitePlublicInterfaceMethodsInspection"
                          displayName='"public" modifier in interface methods'
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"/>
 
-        <localInspection implementationClass="org.gridgain.inspection.GridEmptyLineInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.IgniteEmptyLineInspection"
                          displayName="Illegal empty line before first class element"
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"
             />
 
-        <localInspection implementationClass="org.gridgain.inspection.GridWrongComparationInspection"
+        <localInspection implementationClass="org.apache.ignite.idea.inspection.IgniteWrongComparationInspection"
                          displayName="Illegal comparation, use equals() instead of '=='"
                          language="JAVA"
-                         groupName="GridGain"
+                         groupName="Apache Ignite"
                          enabledByDefault="true"
             />
 
         <intentionAction>
-            <className>org.gridgain.intention.GridGetterSetterGenerator</className>
+            <className>org.apache.ignite.idea.intention.IgniteGetterSetterGenerator</className>
             <category>Getter Setter</category>
-            <descriptionDirectoryName>GridGetterSetterGenerator</descriptionDirectoryName>
+            <descriptionDirectoryName>IgniteGetterSetterGenerator</descriptionDirectoryName>
         </intentionAction>
 
         <intentionAction>
-            <className>org.gridgain.intention.GridGetterGenerator</className>
+            <className>org.apache.ignite.idea.intention.IgniteGetterGenerator</className>
             <category>Getter Setter</category>
-            <descriptionDirectoryName>GridGetterGenerator</descriptionDirectoryName>
+            <descriptionDirectoryName>IgniteGetterGenerator</descriptionDirectoryName>
         </intentionAction>
 
         <intentionAction>
-            <className>org.gridgain.intention.GridSetterGenerator</className>
+            <className>org.apache.ignite.idea.intention.IgniteSetterGenerator</className>
             <category>Getter Setter</category>
-            <descriptionDirectoryName>GridSetterGenerator</descriptionDirectoryName>
+            <descriptionDirectoryName>IgniteSetterGenerator</descriptionDirectoryName>
         </intentionAction>
 
         <intentionAction>
-            <className>org.gridgain.intention.GridGetterSetterSubstitutor</className>
+            <className>org.apache.ignite.idea.intention.IgniteGetterSetterSubstitutor</className>
             <category>Getter Setter</category>
-            <descriptionDirectoryName>GridGetterSetterSubstitutor</descriptionDirectoryName>
+            <descriptionDirectoryName>IgniteGetterSetterSubstitutor</descriptionDirectoryName>
         </intentionAction>
 
-        <projectService serviceImplementation="org.gridgain.inspection.abbrev.GridAbbreviationConfig" />
+        <projectService serviceImplementation="org.apache.ignite.idea.inspection.abbrev.IgniteAbbreviationConfig" />
     </extensions>
 </idea-plugin>
