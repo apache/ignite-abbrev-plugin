@@ -20,6 +20,6 @@
 <plugins>
     <plugin
         id="Apache Ignite abbreviation plugin"
-        url="https://github.com/dspavlov/ignite-abbrev-plugin/releases/download/3.0.0/ignite-abbrev-plugin.jar"
-        version="3.0.0" />
+        url="https://github.com/dspavlov/ignite-abbrev-plugin/releases/download/3.0.1/ignite-abbrev-plugin.jar"
+        version="3.0.1" />
 </plugins>
