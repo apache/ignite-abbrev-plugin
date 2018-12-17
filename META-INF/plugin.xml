@@ -22,7 +22,7 @@
     <description><![CDATA[Simplifies development with Apache Ignite
         <a href="https://cwiki.apache.org/confluence/display/IGNITE/Coding+Guidelines">coding guidelines</a>.]]>
     </description>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <vendor>Apache Ignite</vendor>
 
     <idea-version since-build="135.1"/>
