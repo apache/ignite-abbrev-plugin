@@ -17,24 +17,8 @@
   limitations under the License.
 -->
 
-<idea-plugin version="2">
-    <name>Apache Ignite abbreviation plugin</name>
-    <description><![CDATA[Simplifies development with Apache Ignite
-        <a href="https://cwiki.apache.org/confluence/display/IGNITE/Coding+Guidelines">coding guidelines</a>.]]>
-    </description>
-    <version>3.0.1</version>
-    <vendor>Apache Ignite</vendor>
-
-    <idea-version since-build="135.1"/>
-
-    <application-components>
-    </application-components>
-
-    <project-components>
-    </project-components>
-
+<idea-plugin>
     <depends optional="true" config-file="scala-config.xml">org.intellij.scala</depends>
-    <depends>com.intellij.properties</depends>
 
     <actions>
         <action id="ignite-gen-getter-setter" class="org.apache.ignite.idea.action.IgniteGetterSetterAction"
@@ -97,24 +81,28 @@
             <className>org.apache.ignite.idea.intention.IgniteGetterSetterGenerator</className>
             <category>Getter Setter</category>
             <descriptionDirectoryName>IgniteGetterSetterGenerator</descriptionDirectoryName>
+            <language>JAVA</language>
         </intentionAction>
 
         <intentionAction>
             <className>org.apache.ignite.idea.intention.IgniteGetterGenerator</className>
             <category>Getter Setter</category>
             <descriptionDirectoryName>IgniteGetterGenerator</descriptionDirectoryName>
+            <language>JAVA</language>
         </intentionAction>
 
         <intentionAction>
             <className>org.apache.ignite.idea.intention.IgniteSetterGenerator</className>
             <category>Getter Setter</category>
             <descriptionDirectoryName>IgniteSetterGenerator</descriptionDirectoryName>
+            <language>JAVA</language>
         </intentionAction>
 
         <intentionAction>
             <className>org.apache.ignite.idea.intention.IgniteGetterSetterSubstitutor</className>
             <category>Getter Setter</category>
             <descriptionDirectoryName>IgniteGetterSetterSubstitutor</descriptionDirectoryName>
+            <language>JAVA</language>
         </intentionAction>
 
         <projectService serviceImplementation="org.apache.ignite.idea.inspection.abbrev.IgniteAbbreviationConfig" />

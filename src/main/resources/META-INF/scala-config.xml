@@ -17,9 +17,15 @@
   limitations under the License.
 -->
 
-<plugins>
-    <plugin
-        id="Apache Ignite abbreviation plugin"
-        url="https://github.com/dspavlov/ignite-abbrev-plugin/releases/download/3.0.1/ignite-abbrev-plugin.jar"
-        version="3.0.1" />
-</plugins>
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <localInspection
+            implementationClass="org.apache.ignite.idea.inspection.abbrev.IgniteScalaAbbreviationInspection"
+            displayName="Incorrect Scala abbreviation usage"
+            groupName="Apache Ignite"
+            shortName="ScalaAbbreviationUsage"
+            level="WARNING"
+            enabledByDefault="true"
+            language="Scala"/>
+    </extensions>
+</idea-plugin>
