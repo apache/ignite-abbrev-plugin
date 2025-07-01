@@ -22,6 +22,7 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
+import org.apache.ignite.idea.inspection.comment.IgniteCommentInspection;
 
 /** Tests Apache Ignite inspections. */
 public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
@@ -30,6 +31,7 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
         super.setUp();
 
         myFixture.enableInspections(
+            new IgniteCommentInspection(),
             new IgniteEmptyLineInspection()
         );
     }
@@ -37,6 +39,17 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
     /** {@inheritDoc} */
     @Override protected String getTestDataPath() {
         return "src/test/resources/inspection";
+    }
+
+    /** Tests {@link IgniteCommentInspection}. */
+    public void testCommentInspection() {
+        checkQuickFix("Comment1", "Add default comment");
+        checkQuickFix("Comment2", "Add default comment");
+        checkQuickFix("Comment3", "Add default comment");
+        checkQuickFix("Comment4", "Add /** {@inheritDoc} */");
+        checkQuickFix("Comment5", "Add default comment");
+        checkQuickFix("Comment6", "Add empty comment");
+        checkQuickFix("Comment7", "Add default comment");
     }
 
     /** Tests {@link IgniteEmptyLineInspection}. */
