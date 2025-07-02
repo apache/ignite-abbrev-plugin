@@ -32,7 +32,8 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
 
         myFixture.enableInspections(
             new IgniteCommentInspection(),
-            new IgniteEmptyLineInspection()
+            new IgniteEmptyLineInspection(),
+            new IgnitePlublicInterfaceMethodsInspection()
         );
     }
 
@@ -50,6 +51,11 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
         checkQuickFix("Comment5", "Add default comment");
         checkQuickFix("Comment6", "Add empty comment");
         checkQuickFix("Comment7", "Add default comment");
+    }
+
+    /** Tests {@link IgnitePlublicInterfaceMethodsInspection}. */
+    public void testPublicInterfaceMethodInspection() {
+        checkQuickFix("PublicInterfaceMethod", generateFixAllIntentionNameByInspection(new IgnitePlublicInterfaceMethodsInspection()));
     }
 
     /** Tests {@link IgniteEmptyLineInspection}. */
