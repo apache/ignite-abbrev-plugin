@@ -48,8 +48,6 @@ public class IgniteGetterSetterSubstitutor extends PsiElementBaseIntentionAction
 
     /** {@inheritDoc} */
     @Override public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        if (!element.isWritable()) return false;
-
         if (element instanceof PsiJavaToken) {
             final PsiJavaToken token = (PsiJavaToken)element;
 
