@@ -100,8 +100,6 @@ public class IgniteGetterSetterGenerator extends PsiElementBaseIntentionAction i
     /** {@inheritDoc} */
     @SuppressWarnings("SimplifiableIfStatement")
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        if (!element.isWritable()) return false;
-
         PsiField psiField = null;
 
         if (element instanceof PsiField)
