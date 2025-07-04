@@ -22,6 +22,7 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
+import org.apache.ignite.idea.inspection.abbrev.IgniteAbbreviationInspection;
 import org.apache.ignite.idea.inspection.comment.IgniteCommentInspection;
 
 /** Tests Apache Ignite inspections. */
@@ -31,6 +32,7 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
         super.setUp();
 
         myFixture.enableInspections(
+            new IgniteAbbreviationInspection(),
             new IgniteCommentInspection(),
             new IgniteEmptyLineInspection(),
             new IgnitePlublicInterfaceMethodsInspection()
@@ -40,6 +42,11 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
     /** {@inheritDoc} */
     @Override protected String getTestDataPath() {
         return "src/test/resources/inspection";
+    }
+
+    /** Tests {@link IgniteAbbreviationInspection}. */
+    public void testAbbreviationInspection() {
+        checkQuickFix("Abbreviation", generateFixAllIntentionNameByInspection(new IgniteAbbreviationInspection()));
     }
 
     /** Tests {@link IgniteCommentInspection}. */
