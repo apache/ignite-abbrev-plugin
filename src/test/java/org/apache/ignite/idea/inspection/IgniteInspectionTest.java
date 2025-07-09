@@ -33,6 +33,7 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
 
         myFixture.enableInspections(
             new IgniteAbbreviationInspection(),
+            new IgniteBracketInspection(),
             new IgniteCommentInspection(),
             new IgniteEmptyLineInspection(),
             new IgnitePlublicInterfaceMethodsInspection()
@@ -47,6 +48,11 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
     /** Tests {@link IgniteAbbreviationInspection}. */
     public void testAbbreviationInspection() {
         checkQuickFix("Abbreviation", generateFixAllIntentionNameByInspection(new IgniteAbbreviationInspection()));
+    }
+
+    /** Tests {@link IgniteBracketInspection}. */
+    public void testBracketInspection() {
+        checkQuickFix("Bracket", generateFixAllIntentionNameByInspection(new IgniteBracketInspection()));
     }
 
     /** Tests {@link IgniteCommentInspection}. */
