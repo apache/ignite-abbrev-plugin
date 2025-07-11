@@ -33,6 +33,7 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
 
         myFixture.enableInspections(
             new IgniteAbbreviationInspection(),
+            new IgniteAnnotationInspection(),
             new IgniteBracketInspection(),
             new IgniteCommentInspection(),
             new IgniteEmptyLineInspection(),
@@ -77,6 +78,17 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
         checkQuickFix("EmptyLine2", generateFixAllIntentionNameByInspection(new IgniteEmptyLineInspection()));
     }
 
+    /** Tests {@link IgniteAnnotationInspection}. */
+    public void testAnnotationInspection() {
+        myFixture.addClass("public class String {}");
+
+        myFixture.addClass("package java.lang; public @interface Override {}");
+        myFixture.addClass("package org.jetbrains.annotations; public @interface Nullable {}");
+
+        checkInspection("Annotation1", "Annotation @Override must be on the same line with the method name");
+        checkInspection("Annotation2", "Annotation @Nullable must be on the same line with the method name");
+    }
+
     /**
      * Given the name of a test file, runs comparing references inspection quick fix and tests
      * the results against a reference outcome file.
@@ -99,6 +111,20 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
         myFixture.launchAction(action);
 
         myFixture.checkResultByFile(testName + ".after.java");
+    }
+
+    /**
+     * Given the name of a test file, tests description of inspection at caret.
+     *
+     * @param testName    Test file name base
+     * @param description Inspection description
+     */
+    private void checkInspection(String testName, String description) {
+        myFixture.configureByFile(testName + ".java");
+
+        List<HighlightInfo> highlightInfos = myFixture.doHighlighting();
+
+        assertTrue(highlightInfos.stream().anyMatch(info -> description.equals(info.getDescription())));
     }
 
     /** */
