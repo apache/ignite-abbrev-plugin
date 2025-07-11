@@ -37,7 +37,8 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
             new IgniteBracketInspection(),
             new IgniteCommentInspection(),
             new IgniteEmptyLineInspection(),
-            new IgnitePlublicInterfaceMethodsInspection()
+            new IgnitePlublicInterfaceMethodsInspection(),
+            new IgniteWrongComparationInspection()
         );
     }
 
@@ -87,6 +88,13 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
 
         checkInspection("Annotation1", "Annotation @Override must be on the same line with the method name");
         checkInspection("Annotation2", "Annotation @Nullable must be on the same line with the method name");
+    }
+
+    /** Tests {@link IgniteWrongComparationInspection}. */
+    public void testWrongComparationInspection() {
+        myFixture.addClass("package org.apache.ignite.internal.processors.affinity; public final class AffinityTopologyVersion {}");
+
+        checkInspection("WrongComparation", new IgniteWrongComparationInspection().getDisplayName());
     }
 
     /**
