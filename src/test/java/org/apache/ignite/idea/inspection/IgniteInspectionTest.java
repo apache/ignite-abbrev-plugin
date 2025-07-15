@@ -23,6 +23,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import org.apache.ignite.idea.inspection.abbrev.IgniteAbbreviationInspection;
+import org.apache.ignite.idea.inspection.abbrev.IgniteScalaAbbreviationInspection;
 import org.apache.ignite.idea.inspection.comment.IgniteCommentInspection;
 
 /** Tests Apache Ignite inspections. */
@@ -33,6 +34,7 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
 
         myFixture.enableInspections(
             new IgniteAbbreviationInspection(),
+            new IgniteScalaAbbreviationInspection(),
             new IgniteAnnotationInspection(),
             new IgniteBracketInspection(),
             new IgniteCommentInspection(),
@@ -49,34 +51,62 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
 
     /** Tests {@link IgniteAbbreviationInspection}. */
     public void testAbbreviationInspection() {
-        checkQuickFix("Abbreviation", generateFixAllIntentionNameByInspection(new IgniteAbbreviationInspection()));
+        checkJavaQuickFix("Abbreviation", generateFixAllIntentionNameByInspection(new IgniteAbbreviationInspection()));
+    }
+
+    /** Tests {@link IgniteAbbreviationInspection}. */
+    public void testScalaAbbreviationInspection() {
+        checkScalaQuickFix("Abbreviation1", generateFixAllIntentionNameByInspection(new IgniteScalaAbbreviationInspection()));
+        checkScalaQuickFix("Abbreviation2", generateFixAllIntentionNameByInspection(new IgniteScalaAbbreviationInspection()));
     }
 
     /** Tests {@link IgniteBracketInspection}. */
     public void testBracketInspection() {
-        checkQuickFix("Bracket", generateFixAllIntentionNameByInspection(new IgniteBracketInspection()));
+        checkJavaQuickFix("Bracket", generateFixAllIntentionNameByInspection(new IgniteBracketInspection()));
     }
 
     /** Tests {@link IgniteCommentInspection}. */
     public void testCommentInspection() {
-        checkQuickFix("Comment1", "Add default comment");
-        checkQuickFix("Comment2", "Add default comment");
-        checkQuickFix("Comment3", "Add default comment");
-        checkQuickFix("Comment4", "Add /** {@inheritDoc} */");
-        checkQuickFix("Comment5", "Add default comment");
-        checkQuickFix("Comment6", "Add empty comment");
-        checkQuickFix("Comment7", "Add default comment");
+        checkJavaQuickFix("Comment1", "Add default comment");
+        checkJavaQuickFix("Comment2", "Add default comment");
+        checkJavaQuickFix("Comment3", "Add default comment");
+        checkJavaQuickFix("Comment4", "Add /** {@inheritDoc} */");
+        checkJavaQuickFix("Comment5", "Add default comment");
+        checkJavaQuickFix("Comment6", "Add empty comment");
+        checkJavaQuickFix("Comment7", "Add default comment");
     }
 
     /** Tests {@link IgnitePlublicInterfaceMethodsInspection}. */
     public void testPublicInterfaceMethodInspection() {
-        checkQuickFix("PublicInterfaceMethod", generateFixAllIntentionNameByInspection(new IgnitePlublicInterfaceMethodsInspection()));
+        checkJavaQuickFix("PublicInterfaceMethod", generateFixAllIntentionNameByInspection(new IgnitePlublicInterfaceMethodsInspection()));
     }
 
     /** Tests {@link IgniteEmptyLineInspection}. */
     public void testEmptyLineInspection() {
-        checkQuickFix("EmptyLine1", generateFixAllIntentionNameByInspection(new IgniteEmptyLineInspection()));
-        checkQuickFix("EmptyLine2", generateFixAllIntentionNameByInspection(new IgniteEmptyLineInspection()));
+        checkJavaQuickFix("EmptyLine1", generateFixAllIntentionNameByInspection(new IgniteEmptyLineInspection()));
+        checkJavaQuickFix("EmptyLine2", generateFixAllIntentionNameByInspection(new IgniteEmptyLineInspection()));
+    }
+
+    /**
+     * File name pattern 'foo.java' and 'foo.after.java' are matching before and after files
+     * in the resources directory. See {@link #checkQuickFix}.
+     *
+     * @param testName  Base name of test file before quick fix.
+     * @param intention Quick fix name.
+     */
+    public void checkJavaQuickFix(String testName, String intention) {
+        checkQuickFix(testName + ".java", testName + ".after.java", intention);
+    }
+
+    /**
+     * File name pattern 'foo.scala' and 'foo.after.scala' are matching before and after files
+     * in the resources directory. See {@link #checkQuickFix}.
+     *
+     * @param testName  Base name of test file before quick fix.
+     * @param intention Quick fix name.
+     */
+    public void checkScalaQuickFix(String testName, String intention) {
+        checkQuickFix(testName + ".scala", testName + ".after.scala", intention);
     }
 
     /** Tests {@link IgniteAnnotationInspection}. */
@@ -100,14 +130,13 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
     /**
      * Given the name of a test file, runs comparing references inspection quick fix and tests
      * the results against a reference outcome file.
-     * File name pattern 'foo.java' and 'foo.after.java' are matching before and after files
-     * in the resources directory.
      *
-     * @param testName  Test file name base
+     * @param before    Name of test file before quick fix.
+     * @param after     Name of test file after quick fix.
      * @param intention Quick fix name.
      */
-    private void checkQuickFix(String testName, String intention) {
-        myFixture.configureByFile(testName + ".java");
+    private void checkQuickFix(String before, String after, String intention) {
+        myFixture.configureByFile(before);
         List<HighlightInfo> highlightInfos = myFixture.doHighlighting();
         assertFalse(highlightInfos.isEmpty());
 
@@ -118,7 +147,7 @@ public class IgniteInspectionTest extends LightJavaCodeInsightFixtureTestCase {
 
         myFixture.launchAction(action);
 
-        myFixture.checkResultByFile(testName + ".after.java");
+        myFixture.checkResultByFile(after);
     }
 
     /**
