@@ -24,7 +24,7 @@ import org.jetbrains.annotations.*;
 /**
  *
  */
-public class IgniteAnnotationInspection extends BaseJavaLocalInspectionTool {
+public class IgniteAnnotationInspection extends AbstractBaseJavaLocalInspectionTool {
 
     /** {@inheritDoc} */
     @Nls

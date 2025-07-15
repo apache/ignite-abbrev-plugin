@@ -18,7 +18,6 @@
 package org.apache.ignite.idea.inspection.abbrev;
 
 import com.intellij.codeInspection.*;
-import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.*;
 import com.intellij.psi.*;
@@ -33,7 +32,7 @@ import static org.apache.ignite.idea.util.IgniteUtils.*;
  * Inspection that checks variable names for usage of restricted words that
  * need to be abbreviated.
  */
-public class IgniteAbbreviationInspection extends BaseJavaLocalInspectionTool {
+public class IgniteAbbreviationInspection extends AbstractBaseJavaLocalInspectionTool {
     /** {@inheritDoc} */
     @NotNull @Override public String getShortName() {
         return "JavaAbbreviationUsage";
@@ -48,7 +47,7 @@ public class IgniteAbbreviationInspection extends BaseJavaLocalInspectionTool {
     /** {@inheritDoc} */
     @NotNull @Override public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder,
         final boolean isOnTheFly) {
-        final IgniteAbbreviationConfig cfg = ServiceManager.getService(holder.getProject(), IgniteAbbreviationConfig.class);
+        final IgniteAbbreviationConfig cfg = holder.getProject().getService(IgniteAbbreviationConfig.class);
 
         return new JavaElementVisitor() {
             /** {@inheritDoc} */

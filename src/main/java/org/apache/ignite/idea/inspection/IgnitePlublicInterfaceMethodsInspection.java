@@ -29,7 +29,7 @@ import org.jetbrains.annotations.*;
 /**
  *
  */
-public class IgnitePlublicInterfaceMethodsInspection extends BaseJavaLocalInspectionTool {
+public class IgnitePlublicInterfaceMethodsInspection extends AbstractBaseJavaLocalInspectionTool {
 
     /** {@inheritDoc} */
     @Nls
