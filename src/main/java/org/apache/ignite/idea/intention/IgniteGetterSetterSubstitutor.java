@@ -19,11 +19,13 @@ package org.apache.ignite.idea.intention;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaTokenType;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaToken;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -44,6 +46,17 @@ public class IgniteGetterSetterSubstitutor extends PsiElementBaseIntentionAction
     /** {@inheritDoc} */
     @NotNull @Override public String getFamilyName() {
         return getText();
+    }
+
+    /** {@inheritDoc} */
+    @Override public boolean startInWriteAction() {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull Editor editor,
+        @NotNull PsiFile file) {
+        return IntentionPreviewInfo.EMPTY;
     }
 
     /** {@inheritDoc} */
