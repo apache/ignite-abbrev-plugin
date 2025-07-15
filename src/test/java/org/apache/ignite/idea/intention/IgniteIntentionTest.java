@@ -31,7 +31,9 @@ public class IgniteIntentionTest extends LightJavaCodeInsightFixtureTestCase {
 
     /** Tests {@link IgniteGetterSetterGenerator}. */
     public void testGetterSetter() {
-        doTest("GetterSetter", "Generate Apache Ignite style getter and setter");
+        doTest("GetterSetter1", "Generate Apache Ignite style getter and setter");
+        doTest("GetterSetter2", "Generate Apache Ignite style getter and setter");
+        doTest("GetterSetter3", "Generate Apache Ignite style getter and setter");
     }
 
     /** Tests {@link IgniteGetterSetterSubstitutor}. */

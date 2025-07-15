@@ -17,6 +17,7 @@
 
 package org.apache.ignite.idea.intention;
 
+import java.util.Comparator;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.openapi.components.ServiceManager;
@@ -38,8 +39,8 @@ import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocToken;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import org.apache.ignite.idea.IgniteMethodInsertionPointSelector;
 import org.apache.ignite.idea.inspection.abbrev.IgniteAbbreviationConfig;
+import org.apache.ignite.idea.util.IgniteUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,9 +58,6 @@ public class IgniteGetterSetterGenerator extends PsiElementBaseIntentionAction i
 
     /** Generate setter flag. */
     private final boolean genSetter;
-
-    /** Insertion point selector. */
-    private final IgniteMethodInsertionPointSelector insPtSel = new IgniteMethodInsertionPointSelector();
 
     /**
      * Default constructor.
@@ -190,7 +188,7 @@ public class IgniteGetterSetterGenerator extends PsiElementBaseIntentionAction i
 
             psiCls.addAfter(
                 codeStyleMan.reformat(psiGetter),
-                insPtSel.select(psiCls, psiGetter));
+                select(psiCls));
         }
 
         if (genSetter) {
@@ -217,7 +215,7 @@ public class IgniteGetterSetterGenerator extends PsiElementBaseIntentionAction i
 
                 psiCls.addAfter(
                     codeStyleMan.reformat(psiSetter),
-                    insPtSel.select(psiCls, psiSetter));
+                    select(psiCls));
             }
         }
     }
@@ -301,4 +299,32 @@ public class IgniteGetterSetterGenerator extends PsiElementBaseIntentionAction i
         });
     }
 
+    /**
+     * Selects the insertion point for new methods. New methods
+     * should be added after this point.
+     *
+     * @param psiCls Target class for adding methods.
+     * @return The PSI element, after which to insert new method.
+     */
+    private static @Nullable PsiElement select(PsiClass psiCls) {
+        Comparator<PsiMethod> comp = Comparator.comparingInt(PsiElement::getStartOffsetInParent);
+
+        PsiMethod highestMethod = IgniteUtils.min(
+            comp,
+            IgniteUtils.min(comp, psiCls.findMethodsByName("readExternal", false)),
+            IgniteUtils.min(comp, psiCls.findMethodsByName("writeExternal", false)),
+            IgniteUtils.min(comp, psiCls.findMethodsByName("hashCode", false)),
+            IgniteUtils.min(comp, psiCls.findMethodsByName("equals", false)),
+            IgniteUtils.min(comp, psiCls.findMethodsByName("toString", false)));
+
+        if (highestMethod != null)
+            return highestMethod.getPrevSibling();
+
+        PsiElement rBrace = psiCls.getRBrace();
+
+        if (rBrace != null)
+            return rBrace.getPrevSibling();
+
+        return null;
+    }
 }
